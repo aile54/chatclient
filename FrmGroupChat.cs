@@ -84,7 +84,7 @@ namespace MiniClient
                     }
                     else
                     {
-                        if (LastDtDB.CompareTo(dt) <= 0)
+                        if (LastDtDB.CompareTo(dt) < 0)
                         {
                             SaveHistory(e.Message.From.Resource, e.Message.Body, dt);
                         }

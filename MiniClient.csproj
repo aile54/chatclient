@@ -232,7 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientDatabase.sdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

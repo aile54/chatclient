@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using Matrix.Xmpp.Client;
 using Matrix;
+using MiniClient.ClientDatabaseTableAdapters;
+using System.Data.SqlServerCe;
 
 namespace MiniClient
 {
@@ -20,6 +22,27 @@ namespace MiniClient
         public FrmHistoryTransaction(XmppClient xmppClient, Jid roomJid, string nickname)
         {
             InitializeComponent();
+            _roomJid = roomJid;
+            _xmppClient = xmppClient;
+            _nickname = nickname;
+        }
+
+        private void FrmHistoryTransaction_Load(object sender, System.EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter(); 
+            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            connection.Open();
+            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  Body, DateTime from HistoryTransaction 
+                                            where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '1'",
+                                            _xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare), connection);
+            adapter.Fill(dt);
+            connection.Close();
+            foreach (DataRow item in dt.Rows)
+            {
+                txtBox.AppendText("("+item["DateTime"]+") " + item["Body"]);
+                txtBox.AppendText("\r\n");
+            }
         }
     }
 }

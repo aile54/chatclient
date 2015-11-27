@@ -48,6 +48,7 @@
             this.Controls.Add(this.txtBox);
             this.Name = "FrmHistoryTransaction";
             this.Text = "FrmHistoryTransaction";
+            this.Load += new System.EventHandler(this.FrmHistoryTransaction_Load);
             this.ResumeLayout(false);
 
         }
