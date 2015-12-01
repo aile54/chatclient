@@ -36,6 +36,7 @@
             this.txtBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtBox.Location = new System.Drawing.Point(0, 0);
             this.txtBox.Name = "txtBox";
+            this.txtBox.ReadOnly = true;
             this.txtBox.Size = new System.Drawing.Size(284, 261);
             this.txtBox.TabIndex = 0;
             this.txtBox.Text = "";

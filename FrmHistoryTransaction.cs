@@ -34,12 +34,35 @@ namespace MiniClient
             SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
             SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  Body, DateTime from HistoryTransaction 
-                                            where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '1'",
+                                            where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '1' ORDER BY DateTime ASC",
                                             _xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare), connection);
             adapter.Fill(dt);
             connection.Close();
+            DateTime dtTemp = new DateTime();
             foreach (DataRow item in dt.Rows)
             {
+                DateTime dTime = DateTime.Parse(item["DateTime"].ToString());
+                if (dt.Rows.IndexOf(item) == 0)
+                {
+                    dtTemp = dTime;
+                    txtBox.SelectionColor = Color.Black;
+                    txtBox.SelectionAlignment = HorizontalAlignment.Center;
+                    txtBox.SelectionFont = new System.Drawing.Font(txtBox.Font, FontStyle.Bold);
+                    txtBox.AppendText(dtTemp.ToLongDateString().ToString());
+                    txtBox.AppendText("\r\n");
+                }
+                else if (dtTemp.Date.CompareTo(dTime.Date) != 0)
+                {
+                    dtTemp = dTime;
+                    txtBox.SelectionColor = Color.Black;
+                    txtBox.SelectionAlignment = HorizontalAlignment.Center;
+                    txtBox.SelectionFont = new System.Drawing.Font(txtBox.Font, FontStyle.Bold);
+                    txtBox.AppendText(dtTemp.ToLongDateString().ToString());
+                    txtBox.AppendText("\r\n");
+                }
+
+                txtBox.SelectionAlignment = HorizontalAlignment.Left;
+                txtBox.SelectionFont = new System.Drawing.Font(txtBox.Font, FontStyle.Regular);
                 txtBox.AppendText("("+item["DateTime"]+") " + item["Body"]);
                 txtBox.AppendText("\r\n");
             }

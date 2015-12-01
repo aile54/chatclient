@@ -12,6 +12,7 @@ using System.Data.SqlServerCe;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using System.Threading;
 
 namespace MiniClient
 {
@@ -71,30 +72,39 @@ namespace MiniClient
         bool isEnd = false;
         private void MessageCallback(object sender, MessageEventArgs e)
         {
-            if (e.Message.Type == MessageType.GroupChat)
+            try
             {
-                if (e.Message.Delay != null)
+                if (e.Message.Type == MessageType.GroupChat)
                 {
-                    string datetime = e.Message.Delay.GetAttribute("stamp");
-                    DateTime dt = new DateTime();
-                    DateTime.TryParse(datetime, out dt);
-                    if (DateTime.Now.Date.AddDays(-1).CompareTo(dt.Date) <= 0)
+                    if (e.Message.Delay != null)
                     {
-                        IncomingMessage(e.Message);
+                        string datetime = e.Message.Delay.GetAttribute("stamp");
+                        DateTime dt = new DateTime();
+                        DateTime.TryParse(datetime, out dt);
+                        if (DateTime.Now.Date.AddDays(-1).CompareTo(dt.Date) <= 0)
+                        {
+                            IncomingMessage(e.Message);
+                        }
+                        else
+                        {
+                            if (LastDtDB.CompareTo(dt) < 0)
+                            {
+                                SaveHistory(e.Message.From.Resource, e.Message.Body, dt);
+                            }
+                        }
                     }
                     else
                     {
-                        if (LastDtDB.CompareTo(dt) < 0)
-                        {
-                            SaveHistory(e.Message.From.Resource, e.Message.Body, dt);
-                        }
+                        IncomingMessage(e.Message);
                     }
                 }
-                else
-                {
-                    IncomingMessage(e.Message);
-                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+                throw;
+            }
+            
         }
 
         private void GetLastRow(string user, string domain, string group, out DateTime lastDt)
@@ -108,19 +118,18 @@ namespace MiniClient
                                             user, domain, group), connection);
             adapter.Fill(dt);
             connection.Close();
-            if (dt != null && dt.Rows.Count != 0)
+            if (dt != null && dt.Rows.Count != 0 && dt.Rows[0]["DateTime"].ToString() != string.Empty)
             {
                 lastDt = DateTime.Parse(dt.Rows[0]["DateTime"].ToString());
             }
         }
-
 
         private void SaveHistory(string person, string body, DateTime dt)
         {
             StringBuilder q = new StringBuilder();
             q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime]) VALUES ");
             q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}')", 1, _xmppClient.Username, _xmppClient.XmppDomain,
-                _roomJid.Bare, body, dt);
+                _roomJid.Bare, body.Replace("'","''"), dt);
             SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
             SqlCeCommand sqlCeCommand = new SqlCeCommand();
@@ -194,6 +203,7 @@ namespace MiniClient
             return null;
         }
 
+        DateTime dtTemp = new DateTime();
         private void IncomingMessage(Matrix.Xmpp.Client.Message msg)
         {
             if (msg.Type == MessageType.Error)
@@ -216,9 +226,49 @@ namespace MiniClient
             }
             else
             {
+                if (msg.Delay != null)
+                {
+                    string datetime = msg.Delay.GetAttribute("stamp");
+                    DateTime dt = new DateTime();
+                    DateTime.TryParse(datetime, out dt);
+                    if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
+                    {
+                        dtTemp = dt;
+                        rtfChat.SelectionColor = Color.Black;
+                        rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                        rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                        rtfChat.AppendText(dt.ToLongDateString().ToString());
+                        rtfChat.AppendText("\r\n");
+                    }
+                    else
+                    {
+                        if (dtTemp.Date.CompareTo(dt.Date) != 0)
+                        {
+                            dtTemp = dt;
+                            rtfChat.SelectionColor = Color.Black;
+                            rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                            rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                            rtfChat.AppendText(dt.ToLongDateString().ToString());
+                            rtfChat.AppendText("\r\n");
+                        }
+                    }
+                }
+                else if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
+                {
+                    dtTemp = DateTime.Now;
+                    rtfChat.SelectionColor = Color.Black;
+                    rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                    rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                    rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
+                    rtfChat.AppendText("\r\n");
+                }
+                
+
                 if (msg.Body == null)
                     return;
 
+                rtfChat.SelectionAlignment = HorizontalAlignment.Left;
+                rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
                 rtfChat.SelectionColor = Color.Red;
                 // The Nickname of the sender is in GroupChat in the Resource of the Jid
                 rtfChat.AppendText(msg.From.Resource + " said: ");
@@ -266,7 +316,7 @@ namespace MiniClient
 
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            new FrmHistoryTransaction(_xmppClient, _roomJid, _nickname).Show();
+            new FrmHistoryTransaction(_xmppClient, _roomJid, _nickname).ShowDialog();
         }
     }
 }

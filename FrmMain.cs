@@ -532,7 +532,7 @@ namespace MiniClient
                 input = new FrmInputBox("Enter the Jid of the room to join (e.g. jdev@conference.jabber.org)", "Room");
                 if (input.ShowDialog() == DialogResult.OK)
                 {
-                    var roomJid = new Jid("kddi_airwater-gas-management@conference.vitenet1.net");//input.Result);
+                    var roomJid = new Jid(input.Result == string.Empty ? "kddi_airwater-gas-management@conference.vitenet1.net" : input.Result);//input.Result);
                     new FrmGroupChat(xmppClient, roomJid, nickname).Show();
                 }
             }
