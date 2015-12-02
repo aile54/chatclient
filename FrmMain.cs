@@ -96,9 +96,9 @@ namespace MiniClient
        
         private void cmdConnect_Click(object sender, System.EventArgs e)
         {
-            string username = "lnai";/// txtUsername.Text;
+            string username = txtUsername.Text;
             string server = "192.168.0.236";// txtServer.Text;
-            string pass = "aiNGUYENle745369";// txtPassword.Text;
+            string pass = txtPassword.Text;
 
             xmppClient.SetUsername(username);
             xmppClient.SetXmppDomain(server);
