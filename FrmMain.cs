@@ -205,8 +205,6 @@ namespace MiniClient
             }
         }
 
-       
-
         private void xmppClient_OnPresence(object sender, PresenceEventArgs e)
         {
             DisplayEvent(string.Format("OnPresence\t{0}", e.Presence.From));
@@ -280,7 +278,7 @@ namespace MiniClient
                     
                     var f = new FrmChat(e.Message.From, xmppClient, nick);
                     f.Show();
-                    f.IncomingMessage(e.Message);
+                    f.IncomingMessage(e.Message, e.Message.From.Resource, DateTime.Now);
                 }
             }
         }
@@ -379,14 +377,14 @@ namespace MiniClient
 
         private void xmppClient_OnSendXml(object sender, TextEventArgs e)
         {
-            rtfDebug.SelectionStart = rtfDebug.Text.Length;
-            rtfDebug.SelectionLength = 0;
-            rtfDebug.SelectionColor = Color.Blue;
-            rtfDebug.AppendText("SEND: ");
-            rtfDebug.SelectionColor = Color.Black;
-            rtfDebug.AppendText(e.Text);
-            rtfDebug.AppendText("\r\n");
-            ScrollRtfToEnd(rtfDebug);
+            //rtfDebug.SelectionStart = rtfDebug.Text.Length;
+            //rtfDebug.SelectionLength = 0;
+            //rtfDebug.SelectionColor = Color.Blue;
+            //rtfDebug.AppendText("SEND: ");
+            //rtfDebug.SelectionColor = Color.Black;
+            //rtfDebug.AppendText(e.Text);
+            //rtfDebug.AppendText("\r\n");
+            //ScrollRtfToEnd(rtfDebug);
         }
 
         private void ScrollRtfToEnd(RichTextBox rtf)
@@ -438,7 +436,8 @@ namespace MiniClient
                 var item = listContacts.SelectedItems[0];
                 if (!Util.ChatForms.ContainsKey(item.Name))
                 {
-                    var f = new FrmChat(item.Name, xmppClient, item.Text);
+                    var roomJid = new Jid(item.Name);
+                    var f = new FrmChat(roomJid, xmppClient, item.Text);
                     f.Show();
                 }
             }

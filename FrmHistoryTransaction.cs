@@ -18,24 +18,26 @@ namespace MiniClient
         private readonly Jid _roomJid;
         private readonly XmppClient _xmppClient;
         private readonly string _nickname;
+        private readonly bool _isGroup;
 
-        public FrmHistoryTransaction(XmppClient xmppClient, Jid roomJid, string nickname)
+        public FrmHistoryTransaction(XmppClient xmppClient, Jid roomJid, string nickname, bool isGroup)
         {
             InitializeComponent();
             _roomJid = roomJid;
             _xmppClient = xmppClient;
             _nickname = nickname;
+            _isGroup = isGroup;
         }
 
         private void FrmHistoryTransaction_Load(object sender, System.EventArgs e)
         {
             DataTable dt = new DataTable();
-            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter(); 
+            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
             SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
             SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  Body, DateTime from HistoryTransaction 
-                                            where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '1' ORDER BY DateTime ASC",
-                                            _xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare), connection);
+                                            where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '{3}' ORDER BY DateTime ASC",
+                                            _xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare, (_isGroup ? "1" : "0")), connection);
             adapter.Fill(dt);
             connection.Close();
             DateTime dtTemp = new DateTime();
@@ -63,7 +65,7 @@ namespace MiniClient
 
                 txtBox.SelectionAlignment = HorizontalAlignment.Left;
                 txtBox.SelectionFont = new System.Drawing.Font(txtBox.Font, FontStyle.Regular);
-                txtBox.AppendText("("+item["DateTime"]+") " + item["Body"]);
+                txtBox.AppendText("(" + DateTime.Parse(item["DateTime"].ToString()).TimeOfDay.ToString() + ") " + item["Body"]);
                 txtBox.AppendText("\r\n");
             }
         }

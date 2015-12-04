@@ -35,6 +35,7 @@ namespace MiniClient
             this.rtfSend = new System.Windows.Forms.RichTextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.rtfChat = new System.Windows.Forms.RichTextBox();
+            this.btnHistory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,21 +89,34 @@ namespace MiniClient
             this.rtfChat.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtfChat.Location = new System.Drawing.Point(0, 0);
             this.rtfChat.Name = "rtfChat";
+            this.rtfChat.ReadOnly = true;
             this.rtfChat.Size = new System.Drawing.Size(471, 144);
             this.rtfChat.TabIndex = 10;
             this.rtfChat.Text = "";
             // 
-            // frmChat
+            // btnHistory
+            // 
+            this.btnHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHistory.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnHistory.Location = new System.Drawing.Point(313, 206);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(72, 24);
+            this.btnHistory.TabIndex = 7;
+            this.btnHistory.Text = "&History";
+            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
+            // 
+            // FrmChat
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(471, 260);
             this.Controls.Add(this.rtfChat);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.rtfSend);
+            this.Controls.Add(this.btnHistory);
             this.Controls.Add(this.cmdSend);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusBar1);
-            this.Name = "frmChat";
+            this.Name = "FrmChat";
             this.Text = "frmChat";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmChat_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -117,5 +131,6 @@ namespace MiniClient
         private System.Windows.Forms.RichTextBox rtfSend;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.RichTextBox rtfChat;
+        private System.Windows.Forms.Button btnHistory;
     }
 }

@@ -69,7 +69,6 @@ namespace MiniClient
 
         }
 
-        bool isEnd = false;
         private void MessageCallback(object sender, MessageEventArgs e)
         {
             try
@@ -316,7 +315,7 @@ namespace MiniClient
 
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            new FrmHistoryTransaction(_xmppClient, _roomJid, _nickname).ShowDialog();
+            new FrmHistoryTransaction(_xmppClient, _roomJid, _nickname,true).ShowDialog();
         }
     }
 }
