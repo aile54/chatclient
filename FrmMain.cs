@@ -19,6 +19,8 @@ using Presence=Matrix.Xmpp.Client.Presence;
 using RosterItem=Matrix.Xmpp.Roster.RosterItem;
 using Subscription=Matrix.Xmpp.Roster.Subscription;
 using EventArgs=Matrix.EventArgs;
+using MiniClient.ClientDatabaseTableAdapters;
+using System.Data.SqlServerCe;
 
 namespace MiniClient
 {
@@ -579,5 +581,17 @@ namespace MiniClient
                 xmppClient.SendPresence(Matrix.Xmpp.Show.DoNotDisturb);
         }
         #endregion
+
+        private void resetDatabaseToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            string query = "DELETE FROM HistoryTransaction";
+            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
+            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = query;
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
     }
 }

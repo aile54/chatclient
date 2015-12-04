@@ -10,6 +10,7 @@ using Matrix.Xmpp.Client;
 using Matrix;
 using MiniClient.ClientDatabaseTableAdapters;
 using System.Data.SqlServerCe;
+using Encrypt_Decrypt_Tool;
 
 namespace MiniClient
 {
@@ -44,6 +45,7 @@ namespace MiniClient
             foreach (DataRow item in dt.Rows)
             {
                 DateTime dTime = DateTime.Parse(item["DateTime"].ToString());
+                string decrypt = Cryptography.RSA2.Decrypt(item["Body"].ToString());
                 if (dt.Rows.IndexOf(item) == 0)
                 {
                     dtTemp = dTime;
@@ -65,7 +67,7 @@ namespace MiniClient
 
                 txtBox.SelectionAlignment = HorizontalAlignment.Left;
                 txtBox.SelectionFont = new System.Drawing.Font(txtBox.Font, FontStyle.Regular);
-                txtBox.AppendText("(" + DateTime.Parse(item["DateTime"].ToString()).TimeOfDay.ToString() + ") " + item["Body"]);
+                txtBox.AppendText("(" + DateTime.Parse(item["DateTime"].ToString()).TimeOfDay.ToString() + ") " + decrypt);
                 txtBox.AppendText("\r\n");
             }
         }

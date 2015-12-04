@@ -89,6 +89,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ClientDatabase.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Cryptography.cs" />
     <Compile Include="FrmChat.cs">
       <SubType>Form</SubType>
     </Compile>

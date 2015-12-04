@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlServerCe;
 using System.Text;
 using MiniClient.ClientDatabaseTableAdapters;
+using Encrypt_Decrypt_Tool;
 
 namespace MiniClient
 {
@@ -61,6 +62,7 @@ namespace MiniClient
                 if (item["DateTime"].ToString() != string.Empty)
                 {
                     DateTime dTime = DateTime.Parse(item["DateTime"].ToString());
+                    string decrypt = Cryptography.RSA2.Decrypt(item["Body"].ToString());
                     if (DateTime.Now.Date.AddDays(-1).CompareTo(dTime.Date) <= 0)
                     {
                         if (dt.Rows.IndexOf(item) == 0)
@@ -84,7 +86,7 @@ namespace MiniClient
 
                         rtfChat.SelectionAlignment = HorizontalAlignment.Left;
                         rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
-                        rtfChat.AppendText("(" + DateTime.Parse(item["DateTime"].ToString()).TimeOfDay.ToString() + ") " + item["Body"]);
+                        rtfChat.AppendText("(" + DateTime.Parse(item["DateTime"].ToString()).TimeOfDay.ToString() + ") " + decrypt);
                         rtfChat.AppendText("\r\n");
                     }
                 }
@@ -110,10 +112,11 @@ namespace MiniClient
 
         private void SaveHistory(string person, string body, DateTime dt)
         {
+            string encrypt = Cryptography.RSA2.Encrypt(body);
             StringBuilder q = new StringBuilder();
             q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime]) VALUES ");
             q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}')", 0, _xmppClient.Username, _xmppClient.XmppDomain,
-                _jid.Bare, body.Replace("'", "''"), dt);
+                _jid.Bare, encrypt, dt);
             SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
             SqlCeCommand sqlCeCommand = new SqlCeCommand();

@@ -72,6 +72,8 @@
             this.mucManager = new Matrix.Xmpp.Client.MucManager();
             this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
             this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
+            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabContacts.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -339,7 +341,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.presenseToolStripMenuItem,
-            this.groupChatToolStripMenuItem});
+            this.groupChatToolStripMenuItem,
+            this.settingToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(502, 24);
@@ -466,6 +469,21 @@
             this.presenceManager.XmppClient = this.xmppClient;
             this.presenceManager.OnSubscribe += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.presenceManager_OnSubscribe);
             // 
+            // settingToolStripMenuItem
+            // 
+            this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetDatabaseToolStripMenuItem});
+            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.settingToolStripMenuItem.Text = "Setting";
+            // 
+            // resetDatabaseToolStripMenuItem
+            // 
+            this.resetDatabaseToolStripMenuItem.Name = "resetDatabaseToolStripMenuItem";
+            this.resetDatabaseToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.resetDatabaseToolStripMenuItem.Text = "Reset Database";
+            this.resetDatabaseToolStripMenuItem.Click += new System.EventHandler(this.resetDatabaseToolStripMenuItem_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -539,6 +557,8 @@
         private System.Windows.Forms.ToolStripMenuItem presenceAwayToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem presenceExtendedAwayToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem presenceDoNotDisturbToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetDatabaseToolStripMenuItem;
     }
 }
 
