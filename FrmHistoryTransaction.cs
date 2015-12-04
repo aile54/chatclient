@@ -36,7 +36,7 @@ namespace MiniClient
             HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
             SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
-            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  Body, DateTime from HistoryTransaction 
+            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  Body, DateTime, PIC from HistoryTransaction 
                                             where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = '{3}' ORDER BY DateTime ASC",
                                             _xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare, (_isGroup ? "1" : "0")), connection);
             adapter.Fill(dt);
@@ -45,7 +45,7 @@ namespace MiniClient
             foreach (DataRow item in dt.Rows)
             {
                 DateTime dTime = DateTime.Parse(item["DateTime"].ToString());
-                string decrypt = Cryptography.RSA2.Decrypt(item["Body"].ToString());
+                string decrypt = item["PIC"].ToString() + " said: " + Cryptography.RSA2.Decrypt(item["Body"].ToString());
                 if (dt.Rows.IndexOf(item) == 0)
                 {
                     dtTemp = dTime;

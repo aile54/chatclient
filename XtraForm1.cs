@@ -14,6 +14,7 @@ namespace MiniClient
         public XtraForm1()
         {
             InitializeComponent();
+
         }
     }
 }

@@ -13,6 +13,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 using System.Threading;
+using Encrypt_Decrypt_Tool;
 
 namespace MiniClient
 {
@@ -21,11 +22,14 @@ namespace MiniClient
         private MucManager mm;
         DateTime LastDtDB = new DateTime();
         HistoryTransactionTableAdapter local_history;
+        SqlCeConnection connection;
+
         #region << Constructors >>        
         public FrmGroupChat(XmppClient xmppClient, Jid roomJid, string nickname)
         {
             InitializeComponent();
             local_history = new HistoryTransactionTableAdapter();
+            connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             _roomJid = roomJid;
             _xmppClient = xmppClient;
             _nickname = nickname;
@@ -88,7 +92,7 @@ namespace MiniClient
                         {
                             if (LastDtDB.CompareTo(dt) < 0)
                             {
-                                SaveHistory(e.Message.From.Resource, e.Message.Body, dt);
+                                SaveHistory(e.Message.From.Resource, e.Message.Body, dt, e.Message.From.Resource);
                             }
                         }
                     }
@@ -110,7 +114,6 @@ namespace MiniClient
         {
             lastDt = new DateTime();
             DataTable dt = new DataTable();
-            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
             SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  MAX(DateTime) AS DateTime from HistoryTransaction 
                                             where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}'",
@@ -123,19 +126,19 @@ namespace MiniClient
             }
         }
 
-        private void SaveHistory(string person, string body, DateTime dt)
+        private void SaveHistory(string person, string body, DateTime dt, string pic)
         {
+            string encrypt = Cryptography.RSA2.Encrypt(body);
             StringBuilder q = new StringBuilder();
-            q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime]) VALUES ");
-            q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}')", 1, _xmppClient.Username, _xmppClient.XmppDomain,
-                _roomJid.Bare, body.Replace("'","''"), dt);
-            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime], [PIC]) VALUES ");
+            q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", 1, _xmppClient.Username, _xmppClient.XmppDomain,
+                _roomJid.Bare, encrypt, dt, pic);
             connection.Open();
             SqlCeCommand sqlCeCommand = new SqlCeCommand();
             sqlCeCommand = connection.CreateCommand();
             sqlCeCommand.CommandText = q.ToString();
             sqlCeCommand.ExecuteNonQuery();
-
+            connection.Close();
             //local_history.InsertQuery(true, _xmppClient.Username, _xmppClient.XmppDomain,
             //    _roomJid.Bare, person + ": " + body, dt);
           

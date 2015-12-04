@@ -53,6 +53,8 @@ namespace MiniClient
           
             fm.XmppClient = xmppClient;
             fm.OnFile += fm_OnFile;
+            groupChatToolStripMenuItem.Enabled = false;
+            settingToolStripMenuItem.Enabled = false;
         }
        
         private static void RegisterCustomElements()
@@ -129,6 +131,8 @@ namespace MiniClient
 
             Matrix.License.LicenseManager.m_IsValid = true;
             xmppClient.Open();
+            groupChatToolStripMenuItem.Enabled = true;
+            settingToolStripMenuItem.Enabled = true;
         }
 
         private void xmppClient_OnError(object sender, ExceptionEventArgs e)

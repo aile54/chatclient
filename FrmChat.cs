@@ -15,43 +15,45 @@ using Encrypt_Decrypt_Tool;
 
 namespace MiniClient
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public partial class FrmChat : Form
-	{
-		private XmppClient	    _xmppClient;
-		private Jid			    _jid;
-		private readonly string	_nickname;
+    /// <summary>
+    /// 
+    /// </summary>
+    public partial class FrmChat : Form
+    {
+        private XmppClient _xmppClient;
+        private Jid _jid;
+        private readonly string _nickname;
         DateTime LastDtDB = new DateTime();
         HistoryTransactionTableAdapter local_history;
         DateTime dtTemp = new DateTime();
+        SqlCeConnection connection;
         private MucManager mm;
-		public FrmChat(Jid jid, XmppClient con, string nickname)
-		{
-			_jid		= jid;
-			_xmppClient = con;
-			_nickname	= nickname;
+        SqlCeCommand sqlCeCommand;
+        public FrmChat(Jid jid, XmppClient con, string nickname)
+        {
+            _jid = jid;
+            _xmppClient = con;
+            _nickname = nickname;
             local_history = new HistoryTransactionTableAdapter();
-			InitializeComponent();
-			
-			Text = "Chat with " + nickname;
-			
-			Util.ChatForms.Add(_jid.Bare.ToLower(), this);
-			// Setup new Message Callback
+            connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            InitializeComponent();
+
+            Text = "Chat with " + nickname;
+
+            Util.ChatForms.Add(_jid.Bare.ToLower(), this);
+            // Setup new Message Callback
             con.MessageFilter.Add(jid, new BareJidComparer(), OnMessage);
 
             GetLastRow(_xmppClient.Username, _xmppClient.XmppDomain, _jid.Bare, out LastDtDB);
 
             this.Load += new EventHandler(FrmChat_Load);
-		}
+        }
 
         void FrmChat_Load(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
             connection.Open();
-            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  DateTime, Body from HistoryTransaction 
+            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  DateTime, Body, PIC from HistoryTransaction 
                                             where AccountName = '{0}' and ServerID = '{1}' and GroupName = '{2}' and IsGroup = 0 ORDER BY Datetime ASC",
                                             _xmppClient.Username, _xmppClient.XmppDomain, _jid.Bare), connection);
             adapter.Fill(dt);
@@ -62,7 +64,7 @@ namespace MiniClient
                 if (item["DateTime"].ToString() != string.Empty)
                 {
                     DateTime dTime = DateTime.Parse(item["DateTime"].ToString());
-                    string decrypt = Cryptography.RSA2.Decrypt(item["Body"].ToString());
+                    string decrypt = item["PIC"].ToString() + " said: " + Cryptography.RSA2.Decrypt(item["Body"].ToString());
                     if (DateTime.Now.Date.AddDays(-1).CompareTo(dTime.Date) <= 0)
                     {
                         if (dt.Rows.IndexOf(item) == 0)
@@ -110,27 +112,24 @@ namespace MiniClient
             }
         }
 
-        private void SaveHistory(string person, string body, DateTime dt)
+        private void SaveHistory(string person, string body, DateTime dt, string pic)
         {
             string encrypt = Cryptography.RSA2.Encrypt(body);
             StringBuilder q = new StringBuilder();
-            q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime]) VALUES ");
-            q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}')", 0, _xmppClient.Username, _xmppClient.XmppDomain,
-                _jid.Bare, encrypt, dt);
-            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime], [PIC]) VALUES ");
+            q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", 0, _xmppClient.Username, _xmppClient.XmppDomain,
+                _jid.Bare, encrypt, dt, pic);
+
             connection.Open();
-            SqlCeCommand sqlCeCommand = new SqlCeCommand();
+            sqlCeCommand = new SqlCeCommand();
             sqlCeCommand = connection.CreateCommand();
             sqlCeCommand.CommandText = q.ToString();
             sqlCeCommand.ExecuteNonQuery();
-
-            //local_history.InsertQuery(true, _xmppClient.Username, _xmppClient.XmppDomain,
-            //    _roomJid.Bare, person + ": " + body, dt);
-
+            connection.Close();
         }
 
         private void OutgoingMessage(Message msg, string person, DateTime date)
-		{
+        {
             if (msg.Delay != null)
             {
                 string datetime = msg.Delay.GetAttribute("stamp");
@@ -170,18 +169,18 @@ namespace MiniClient
 
             rtfChat.SelectionAlignment = HorizontalAlignment.Left;
             rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
-			rtfChat.SelectionColor = Color.Red;
-			rtfChat.SelectionColor = Color.Blue;
-			rtfChat.AppendText("Me said: ");
-			rtfChat.SelectionColor = Color.Black;
-			rtfChat.AppendText(msg.Body);
-			rtfChat.AppendText("\r\n");
+            rtfChat.SelectionColor = Color.Red;
+            rtfChat.SelectionColor = Color.Blue;
+            rtfChat.AppendText("Me said: ");
+            rtfChat.SelectionColor = Color.Black;
+            rtfChat.AppendText(msg.Body);
+            rtfChat.AppendText("\r\n");
 
-            SaveHistory(person, _xmppClient.Username + " said: " + msg.Body, date);
-		}
+            SaveHistory(person, msg.Body, date, _xmppClient.Username);
+        }
 
-		public void IncomingMessage(Message msg, string person, DateTime date)
-		{
+        public void IncomingMessage(Message msg, string person, DateTime date)
+        {
             if (msg.Delay != null)
             {
                 string datetime = msg.Delay.GetAttribute("stamp");
@@ -221,25 +220,25 @@ namespace MiniClient
 
             rtfChat.SelectionAlignment = HorizontalAlignment.Left;
             rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
-			rtfChat.SelectionColor = Color.Red;
-			rtfChat.AppendText(_nickname + " said: ");
-			rtfChat.SelectionColor = Color.Black;
-			rtfChat.AppendText(msg.Body);
-			rtfChat.AppendText("\r\n");
+            rtfChat.SelectionColor = Color.Red;
+            rtfChat.AppendText(_nickname + " said: ");
+            rtfChat.SelectionColor = Color.Black;
+            rtfChat.AppendText(msg.Body);
+            rtfChat.AppendText("\r\n");
 
-            SaveHistory(person, _nickname + " said: " + msg.Body, date);
-		}
+            SaveHistory(person, msg.Body, date, _nickname);
+        }
 
-		private void cmdSend_Click(object sender, EventArgs e)
-		{
-			var msg = new Message {Type = MessageType.Chat, To = _jid, Body = rtfSend.Text};
+        private void cmdSend_Click(object sender, EventArgs e)
+        {
+            var msg = new Message { Type = MessageType.Chat, To = _jid, Body = rtfSend.Text };
 
-		    _xmppClient.Send(msg);
-			OutgoingMessage(msg, _jid.Bare, DateTime.Now);
-			rtfSend.Text = "";
-		}
+            _xmppClient.Send(msg);
+            OutgoingMessage(msg, _jid.Bare, DateTime.Now);
+            rtfSend.Text = "";
+        }
 
-		private void OnMessage(object sender, MessageEventArgs e)
+        private void OnMessage(object sender, MessageEventArgs e)
         {
             try
             {
@@ -257,7 +256,7 @@ namespace MiniClient
                     {
                         if (LastDtDB.CompareTo(dt) < 0)
                         {
-                            SaveHistory(e.Message.From.Resource, e.Message.Body, dt);
+                            SaveHistory(e.Message.From.Resource, e.Message.Body, dt, e.Message.From.Resource);
                         }
                     }
                 }
@@ -269,10 +268,10 @@ namespace MiniClient
             }
             catch (System.Exception)
             {
-                
+
                 throw;
             }
-		}
+        }
 
         private void FrmChat_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -283,7 +282,7 @@ namespace MiniClient
 
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            new FrmHistoryTransaction(_xmppClient, _jid, _nickname,false).ShowDialog();
+            new FrmHistoryTransaction(_xmppClient, _jid, _nickname, false).ShowDialog();
         }
-	}
+    }
 }
