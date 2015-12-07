@@ -46,7 +46,7 @@
             this.btnSignIn.Location = new System.Drawing.Point(177, 117);
             this.btnSignIn.Name = "btnSignIn";
             this.btnSignIn.Size = new System.Drawing.Size(75, 23);
-            this.btnSignIn.TabIndex = 0;
+            this.btnSignIn.TabIndex = 4;
             this.btnSignIn.Text = "Sign in";
             this.btnSignIn.Click += new System.EventHandler(this.btnSignIn_Click);
             // 
@@ -70,9 +70,9 @@
             // 
             this.labelControl2.Location = new System.Drawing.Point(19, 62);
             this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(48, 13);
+            this.labelControl2.Size = new System.Drawing.Size(46, 13);
             this.labelControl2.TabIndex = 4;
-            this.labelControl2.Text = "Username";
+            this.labelControl2.Text = "Password";
             // 
             // txtPassword
             // 
@@ -81,7 +81,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Properties.UseSystemPasswordChar = true;
             this.txtPassword.Size = new System.Drawing.Size(164, 20);
-            this.txtPassword.TabIndex = 3;
+            this.txtPassword.TabIndex = 2;
             // 
             // labelControl3
             // 
@@ -97,7 +97,7 @@
             this.txtXmppServer.Location = new System.Drawing.Point(88, 85);
             this.txtXmppServer.Name = "txtXmppServer";
             this.txtXmppServer.Size = new System.Drawing.Size(83, 20);
-            this.txtXmppServer.TabIndex = 5;
+            this.txtXmppServer.TabIndex = 3;
             // 
             // xmppClient
             // 
@@ -117,6 +117,7 @@
             // 
             // FrmLogin
             // 
+            this.AcceptButton = this.btnSignIn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(263, 149);
