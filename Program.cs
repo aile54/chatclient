@@ -13,7 +13,7 @@ namespace MiniClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmMain());
+            Application.Run(new FrmLogin());
         }
     }
 }

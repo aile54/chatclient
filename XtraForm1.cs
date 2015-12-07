@@ -16,5 +16,12 @@ namespace MiniClient
             InitializeComponent();
 
         }
+
+        private void memoEdit1_Paint(object sender, PaintEventArgs e)
+        {
+            MemoEdit txt = sender as MemoEdit;
+
+            txt.Size = new Size(txt.Size.Width, txt.Lines.Length * 25);
+        }
     }
 }

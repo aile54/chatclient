@@ -30,15 +30,16 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XtraForm1));
             this.xtraScrollableControl1 = new DevExpress.XtraEditors.XtraScrollableControl();
-            this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
-            this.panelControl2 = new DevExpress.XtraEditors.PanelControl();
             this.panelControl3 = new DevExpress.XtraEditors.PanelControl();
-            this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
+            this.panelControl2 = new DevExpress.XtraEditors.PanelControl();
+            this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+            this.memoEdit1 = new DevExpress.XtraEditors.MemoEdit();
             this.xtraScrollableControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
             this.panelControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEdit1.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // xtraScrollableControl1
@@ -52,14 +53,13 @@
             this.xtraScrollableControl1.Size = new System.Drawing.Size(746, 382);
             this.xtraScrollableControl1.TabIndex = 0;
             // 
-            // panelControl1
+            // panelControl3
             // 
-            this.panelControl1.Controls.Add(this.labelControl1);
-            this.panelControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelControl1.Location = new System.Drawing.Point(0, 0);
-            this.panelControl1.Name = "panelControl1";
-            this.panelControl1.Size = new System.Drawing.Size(729, 292);
-            this.panelControl1.TabIndex = 0;
+            this.panelControl3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelControl3.Location = new System.Drawing.Point(0, 392);
+            this.panelControl3.Name = "panelControl3";
+            this.panelControl3.Size = new System.Drawing.Size(729, 100);
+            this.panelControl3.TabIndex = 2;
             // 
             // panelControl2
             // 
@@ -69,23 +69,25 @@
             this.panelControl2.Size = new System.Drawing.Size(729, 100);
             this.panelControl2.TabIndex = 1;
             // 
-            // panelControl3
+            // panelControl1
             // 
-            this.panelControl3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelControl3.Location = new System.Drawing.Point(0, 392);
-            this.panelControl3.Name = "panelControl3";
-            this.panelControl3.Size = new System.Drawing.Size(729, 100);
-            this.panelControl3.TabIndex = 2;
+            this.panelControl1.Controls.Add(this.memoEdit1);
+            this.panelControl1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelControl1.Location = new System.Drawing.Point(0, 0);
+            this.panelControl1.Name = "panelControl1";
+            this.panelControl1.Size = new System.Drawing.Size(729, 292);
+            this.panelControl1.TabIndex = 0;
             // 
-            // labelControl1
+            // memoEdit1
             // 
-            this.labelControl1.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelControl1.Location = new System.Drawing.Point(2, 2);
-            this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(725, 288);
-            this.labelControl1.TabIndex = 0;
-            this.labelControl1.Text = resources.GetString("labelControl1.Text");
+            this.memoEdit1.EditValue = resources.GetString("memoEdit1.EditValue");
+            this.memoEdit1.Location = new System.Drawing.Point(154, 60);
+            this.memoEdit1.Name = "memoEdit1";
+            this.memoEdit1.Properties.ReadOnly = true;
+            this.memoEdit1.Properties.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.memoEdit1.Size = new System.Drawing.Size(438, 67);
+            this.memoEdit1.TabIndex = 2;
+            this.memoEdit1.Paint += new System.Windows.Forms.PaintEventHandler(this.memoEdit1_Paint);
             // 
             // XtraForm1
             // 
@@ -96,10 +98,11 @@
             this.Name = "XtraForm1";
             this.Text = "XtraForm1";
             this.xtraScrollableControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
             this.panelControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.memoEdit1.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -110,7 +113,7 @@
         private DevExpress.XtraEditors.PanelControl panelControl3;
         private DevExpress.XtraEditors.PanelControl panelControl2;
         private DevExpress.XtraEditors.PanelControl panelControl1;
-        private DevExpress.XtraEditors.LabelControl labelControl1;
+        private DevExpress.XtraEditors.MemoEdit memoEdit1;
 
     }
 }

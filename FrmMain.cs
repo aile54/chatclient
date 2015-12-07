@@ -37,24 +37,52 @@ namespace MiniClient
         private readonly Dictionary<string, ListViewGroup>  _dictContactGroups = new Dictionary<string, ListViewGroup>();
         private readonly Dictionary<Jid, RosterItem>        _dictContats = new Dictionary<Jid, RosterItem>();
 
-        private Settings.Settings _settings;
-        private Login _login;
-
         FileTransferManager fm = new FileTransferManager();
+        XmppClient xmppClient;
 
         public FrmMain()
         {
             InitializeComponent();
-            SetLicense();
 
             RegisterCustomElements();
-            InitSettings();
+           
             InitContactList();
-          
-            fm.XmppClient = xmppClient;
+
+            xmppClient = FrmLogin.Instance.xmppClient;
+            fm.XmppClient = FrmLogin.Instance.xmppClient;
             fm.OnFile += fm_OnFile;
             groupChatToolStripMenuItem.Enabled = false;
             settingToolStripMenuItem.Enabled = false;
+
+            groupChatToolStripMenuItem.Enabled = true;
+            settingToolStripMenuItem.Enabled = true;
+
+            this.xmppClient.OnError+=new EventHandler<ExceptionEventArgs>(xmppClient_OnError);
+            this.xmppClient.OnMessage+=new EventHandler<MessageEventArgs>(xmppClient_OnMessage);
+            this.xmppClient.OnPrebind += new EventHandler<Matrix.Net.PrebindEventArgs>(xmppClient_OnPrebind);
+            
+            this.xmppClient.OnBind+=new EventHandler<JidEventArgs>(xmppClient_OnBind);
+            this.xmppClient.OnClose+=new EventHandler<EventArgs>(xmppClient_OnClose);
+            this.xmppClient.OnRosterEnd+=new EventHandler<EventArgs>(xmppClient_OnRosterEnd);
+            this.xmppClient.OnRosterStart+=new EventHandler<EventArgs>(xmppClient_OnRosterStart);
+            this.xmppClient.OnRosterItem+=new EventHandler<Matrix.Xmpp.Roster.RosterEventArgs>(xmppClient_OnRosterItem);
+            this.xmppClient.OnPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnPresence);
+            this.xmppClient.OnValidateCertificate+=new EventHandler<CertificateEventArgs>(xmppClient_OnValidateCertificate);
+            this.xmppClient.OnIq+=new EventHandler<IqEventArgs>(xmppClient_OnIq);
+            this.xmppClient.OnReceiveXml+=new EventHandler<TextEventArgs>(xmppClient_OnReceiveXml);
+            this.xmppClient.OnStreamError+=new EventHandler<StreamErrorEventArgs>(xmppClient_OnStreamError);
+            this.xmppClient.OnSendXml+=new EventHandler<TextEventArgs>(xmppClient_OnSendXml);
+            this.xmppClient.OnRegister+=new EventHandler<EventArgs>(xmppClient_OnRegister);
+            this.xmppClient.OnRegisterError+=new EventHandler<IqEventArgs>(xmppClient_OnRegisterError);
+            this.xmppClient.OnRegisterInformation+=new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
+            this.xmppClient.OnBeforeSendPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
+
+
+        }
+
+        void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
+        {
+            
         }
        
         private static void RegisterCustomElements()
@@ -63,86 +91,9 @@ namespace MiniClient
             Factory.RegisterElement<Login>              ("ag-software:settings", "Login");
         }
 
-        private void InitSettings()
-        {
-            _settings = Util.LoadSettings();
-            if (_settings.Login == null)
-                _settings.Login = new Login();
-            
-            _login = _settings.Login;
-            
-            if (_login != null)
-            {
-                if (!string.IsNullOrEmpty(_login.User))
-                    txtUsername.Text = _login.User;
-
-                if (!string.IsNullOrEmpty(_login.Server))
-                    txtServer.Text = _login.Server;
-                
-                if (!string.IsNullOrEmpty(_login.Password))
-                    txtPassword.Text    = _login.Password;
-            }
-        }
-
-        /// <summary>
-        /// Sets the license and activate the evaluation.
-        /// </summary>
-        private static void SetLicense()
-        {
-            // request demo license here:
-            // http://www.ag-software.net/matrix-xmpp-sdk/request-demo-license/
-            const string LIC = @"YOUR LICENSE";
-            Matrix.License.LicenseManager.SetLicense(LIC);
-            
-            // when something is wrong with your license you can find the error here
-            Console.WriteLine(Matrix.License.LicenseManager.LicenseError);
-        }
-       
-        private void cmdConnect_Click(object sender, System.EventArgs e)
-        {
-            string username = txtUsername.Text;
-            string server = "192.168.0.236";// txtServer.Text;
-            string pass = txtPassword.Text;
-
-            xmppClient.SetUsername(username);
-            xmppClient.SetXmppDomain(server);
-            xmppClient.Password = pass;
-            
-            // BOSH exmaple
-            //xmppClient.Transport = Matrix.Net.Transport.BOSH;
-            //xmppClient.Uri = new System.Uri("http://matrix.ag-software.de/http-bind/");
-            
-            xmppClient.Status = "ready for chat";
-            xmppClient.Show = Matrix.Xmpp.Show.Chat;
-
-            if (!String.IsNullOrEmpty(txtHost.Text))
-            {
-                // disable SRV lookups and specify the sever hostname manual
-                xmppClient.ResolveSrvRecords = false;
-                xmppClient.Hostname = txtHost.Text;
-                //xmppClient.Hostname = "192.168.1.106";
-            }
-              
-
-            // set settings
-            _login.User = txtUsername.Text;
-            _login.Server = txtServer.Text;
-            _login.Password = txtPassword.Text;
-
-            Matrix.License.LicenseManager.m_IsValid = true;
-            xmppClient.Open();
-            groupChatToolStripMenuItem.Enabled = true;
-            settingToolStripMenuItem.Enabled = true;
-        }
-
         private void xmppClient_OnError(object sender, ExceptionEventArgs e)
         {
             DisplayEvent("OnError");
-        }
-
-        private void xmppClient_OnLogin(object sender, Matrix.EventArgs e)
-        {
-            DisplayEvent("OnLogin");   
         }
 
         private void DisplayEvent(string ev)
@@ -298,61 +249,12 @@ namespace MiniClient
             //ValidateCertificate(e);
         }
         
-        private void ValidateCertificate(CertificateEventArgs e)
-        {
-            //DisplayEvent("OnValidateCertificate");
-           
-
-            if (e.SslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
-            {
-                e.AcceptCertificate = true;
-            }
-            else
-            {
-                X509Certificate2UI.DisplayCertificate(new X509Certificate2(e.Certificate));
-                if (MessageBox.Show("Accept Certificate", "Certificate", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    e.AcceptCertificate = true;
-                else
-                    e.AcceptCertificate = false;                
-            }
-        }
-
         private void cmdDisconnect_Click(object sender, System.EventArgs e)
         {
             xmppClient.Close();
-        }
 
-        private void xmppClient_OnBeforeSasl(object sender, Matrix.Xmpp.Sasl.SaslEventArgs e)
-        {
-            e.Auto = false;
-            e.SaslMechanism = Matrix.Xmpp.Sasl.SaslMechanism.Plain;
-            
-            /*
-            with the following code you can disable the SASL automatic and manual specify a mechanism.
-            
-             * e.Auto = false;
-            e.SaslMechanism = Matrix.Xmpp.Sasl.SaslMechanism.PLAIN;
-            */
-
-            
-            // X_FACEBOOK_PLATFORM Facebook Auth example
-            //e.Auto = false;
-            //e.SaslMechanism = Matrix.Xmpp.Sasl.SaslMechanism.X_FACEBOOK_PLATFORM;
-
-            //const string APPLICATION_KEY = "12345678901234567890";
-            //const string SECRET_KEY = "98765432109876543210";
-            //e.SaslProperties = new Matrix.Xmpp.Sasl.Processor.Facebook.FacebookProperties
-            //                       {
-            //                           ApiKey = APPLICATION_KEY,
-            //                           ApiSecret = SECRET_KEY,
-            //                           SessionKey = "session_key_from_facebook_api"
-            //                       };
-         }
-
-        private void xmppClient_OnAuthError(object sender, Matrix.Xmpp.Sasl.SaslEventArgs e)
-        {
-            DisplayEvent("OnAuthError");
-            xmppClient.Close();
+            this.Hide();
+            FrmLogin.Instance.Show();
         }
 
         private void xmppClient_OnReceiveXml(object sender, TextEventArgs e)
@@ -380,7 +282,6 @@ namespace MiniClient
             //ScrollRtfToEnd(rtfDebug);
         }
         
-
         private void xmppClient_OnSendXml(object sender, TextEventArgs e)
         {
             //rtfDebug.SelectionStart = rtfDebug.Text.Length;
@@ -432,7 +333,9 @@ namespace MiniClient
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Util.SaveSettings(_settings);
+           
+
+            FrmLogin.Instance.Close();
         }
 
         private void chatToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -456,8 +359,6 @@ namespace MiniClient
                 new FrmVCard(xmppClient, listContacts.SelectedItems[0].Name, false).Show();
             }
         }
-
-        
 
         private void listContacts_MouseUp(object sender, MouseEventArgs e)
         {
@@ -527,7 +428,6 @@ namespace MiniClient
             new FrmVCard(xmppClient, null, true).Show();
         }
         
-       
         private void tsmiEnterRoom_Click(object sender, System.EventArgs e)
         {
             var input = new FrmInputBox("Enter your Nickname for the chatroom", "Nickname", "Nickname");
