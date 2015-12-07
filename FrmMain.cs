@@ -597,5 +597,22 @@ namespace MiniClient
             command.ExecuteNonQuery();
             connection.Close();
         }
+
+        private void addToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            var input = new FrmAddUser();
+            if (input.ShowDialog() == DialogResult.OK)
+            {
+                //var rm = new RosterManager(xmppClient);
+                Jid jid = input.Address;
+                //rm.Add(jid, input.Name);
+
+                var pm = new PresenceManager(xmppClient);
+                string reason = "It's " + input.Name;
+                pm.Subscribe(jid, reason, input.Name);
+            }
+
+            
+        }
     }
 }

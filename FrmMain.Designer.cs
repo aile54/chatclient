@@ -68,12 +68,14 @@
             this.groupChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiEnterRoom = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiEnterRoomTest = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmppClient = new Matrix.Xmpp.Client.XmppClient();
             this.mucManager = new Matrix.Xmpp.Client.MucManager();
             this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
             this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
-            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contractsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabContacts.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -341,6 +343,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.presenseToolStripMenuItem,
+            this.contractsToolStripMenuItem,
             this.groupChatToolStripMenuItem,
             this.settingToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -419,6 +422,21 @@
             this.tsmiEnterRoomTest.Text = "Enter chat room test@conference.ag-software.net";
             this.tsmiEnterRoomTest.Click += new System.EventHandler(this.tsmiEnterRoomTest_Click);
             // 
+            // settingToolStripMenuItem
+            // 
+            this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetDatabaseToolStripMenuItem});
+            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingToolStripMenuItem.Text = "Options";
+            // 
+            // resetDatabaseToolStripMenuItem
+            // 
+            this.resetDatabaseToolStripMenuItem.Name = "resetDatabaseToolStripMenuItem";
+            this.resetDatabaseToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.resetDatabaseToolStripMenuItem.Text = "Reset Database";
+            this.resetDatabaseToolStripMenuItem.Click += new System.EventHandler(this.resetDatabaseToolStripMenuItem_Click);
+            // 
             // xmppClient
             // 
             this.xmppClient.Compression = false;
@@ -469,20 +487,20 @@
             this.presenceManager.XmppClient = this.xmppClient;
             this.presenceManager.OnSubscribe += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.presenceManager_OnSubscribe);
             // 
-            // settingToolStripMenuItem
+            // contractsToolStripMenuItem
             // 
-            this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.resetDatabaseToolStripMenuItem});
-            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            this.settingToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
-            this.settingToolStripMenuItem.Text = "Setting";
+            this.contractsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem});
+            this.contractsToolStripMenuItem.Name = "contractsToolStripMenuItem";
+            this.contractsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.contractsToolStripMenuItem.Text = "Contracts";
             // 
-            // resetDatabaseToolStripMenuItem
+            // addToolStripMenuItem
             // 
-            this.resetDatabaseToolStripMenuItem.Name = "resetDatabaseToolStripMenuItem";
-            this.resetDatabaseToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.resetDatabaseToolStripMenuItem.Text = "Reset Database";
-            this.resetDatabaseToolStripMenuItem.Click += new System.EventHandler(this.resetDatabaseToolStripMenuItem_Click);
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -559,6 +577,8 @@
         private System.Windows.Forms.ToolStripMenuItem presenceDoNotDisturbToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetDatabaseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contractsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
     }
 }
 
