@@ -117,25 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="memoEdit1.EditValue" xml:space="preserve">
-    <value>Dear Ha-san
- 
-I already discussed with Uchida-san by call just now.
- 
-I explained “CAN NOT fixed the schedule yet”
-and “pls let us discuss it at next meeting”.
-He understood that.
- 
-And, about excel file for import master data,
-I pushed again and he promised to push to VN side.
- 
-And then, about “Need Notification for Order sheet or not”,
-I confirmed to him also.
- 
-He said it is needed and he already explained that to Nga-san.
-Now she understood that.
- 
-Thanks and Regards,
-Imamura Takayuki</value>
-  </data>
+  <metadata name="xmppClient.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

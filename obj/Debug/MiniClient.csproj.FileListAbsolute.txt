@@ -19,5 +19,31 @@ E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe.licenses
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.pdb
 E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\ClientDatabase.sdf
+<<<<<<< HEAD
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.csprojResolveAssemblyReference.cache
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmAddUser.resources
+=======
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\bin\Debug\MiniClient.exe.config
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.exe
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.pdb
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\bin\Debug\ClientDatabase.sdf
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\bin\Debug\MiniClient.exe
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\bin\Debug\MiniClient.pdb
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\bin\Debug\Matrix.dll
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.csprojResolveAssemblyReference.cache
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmChat.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmGroupChat.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmHistoryTransaction.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmInputBox.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmReceiveFile.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmSendFile.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmPubSub.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmMain.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmVCard.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.InputDialog.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.Properties.Resources.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.XtraForm1.resources
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.csproj.GenerateResource.Cache
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.exe.licenses
+E:\Workspace\XMPPClient\XMPPClientApp\chatclient\obj\Debug\MiniClient.FrmLogin.resources
+>>>>>>> origin/master
