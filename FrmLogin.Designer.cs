@@ -76,7 +76,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.EditValue = "i01052778b";
+            this.txtPassword.EditValue = "";
             this.txtPassword.Location = new System.Drawing.Point(88, 59);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Properties.UseSystemPasswordChar = true;
