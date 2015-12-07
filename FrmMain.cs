@@ -152,13 +152,15 @@ namespace MiniClient
                     listContacts.Items.RemoveByKey(e.RosterItem.Jid);
                 }
 
-                //var newItem = new ListViewItem(e.RosterItem.Jid, listGroup) {Name = e.RosterItem.Jid};
-                var newItem = new RosterListViewItem(e.RosterItem.Name ?? e.RosterItem.Jid, 0, listGroup)
-                                  {Name = e.RosterItem.Jid.Bare};
-                newItem.SubItems.AddRange(new[] {"", ""});
-                
-              
-                listContacts.Items.Add(newItem);
+                if (listContacts.Items.Find(e.RosterItem.Name ?? e.RosterItem.Jid, true).Count() == 0)
+                {
+                    //var newItem = new ListViewItem(e.RosterItem.Jid, listGroup) {Name = e.RosterItem.Jid};
+                    var newItem = new RosterListViewItem(e.RosterItem.Name ?? e.RosterItem.Jid, 0, listGroup) { Name = e.RosterItem.Jid.Bare };
+                    newItem.SubItems.AddRange(new[] { "", "" });
+
+
+                    listContacts.Items.Add(newItem);
+                }
             }
         }
 
@@ -508,10 +510,22 @@ namespace MiniClient
                 //rm.Add(jid, input.Name);
 
                 var pm = new PresenceManager(xmppClient);
-                string reason = "It's " + input.Name;
+                string reason = "It's " + xmppClient.Username;
                 pm.Subscribe(jid, reason, input.Name);
             }
 
+            
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                var rm = new RosterManager(xmppClient);
+                Jid jid = item.Text;
+                rm.Remove(jid);
+            }
             
         }
     }

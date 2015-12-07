@@ -55,23 +55,18 @@
             this.presenceAwayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.presenceExtendedAwayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.presenceDoNotDisturbToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contractsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiEnterRoom = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiEnterRoomTest = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-<<<<<<< HEAD
             this.xmppClient = new Matrix.Xmpp.Client.XmppClient();
             this.mucManager = new Matrix.Xmpp.Client.MucManager();
             this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
             this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
-            this.contractsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-=======
-            this.mucManager = new Matrix.Xmpp.Client.MucManager();
-            this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
-            this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
->>>>>>> origin/master
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabContacts.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -132,7 +127,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(469, 371);
+            this.tabPage1.Size = new System.Drawing.Size(497, 395);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Events";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -145,7 +140,7 @@
             this.listEvents.ItemHeight = 15;
             this.listEvents.Location = new System.Drawing.Point(3, 3);
             this.listEvents.Name = "listEvents";
-            this.listEvents.Size = new System.Drawing.Size(463, 365);
+            this.listEvents.Size = new System.Drawing.Size(491, 389);
             this.listEvents.TabIndex = 0;
             // 
             // tabPage2
@@ -154,7 +149,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(469, 371);
+            this.tabPage2.Size = new System.Drawing.Size(497, 395);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Debug XML";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -165,7 +160,7 @@
             this.rtfDebug.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtfDebug.Location = new System.Drawing.Point(3, 3);
             this.rtfDebug.Name = "rtfDebug";
-            this.rtfDebug.Size = new System.Drawing.Size(463, 365);
+            this.rtfDebug.Size = new System.Drawing.Size(491, 389);
             this.rtfDebug.TabIndex = 0;
             this.rtfDebug.Text = "";
             // 
@@ -202,9 +197,10 @@
             this.ctxMenuRoster.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chatToolStripMenuItem,
             this.sendFileToolStripMenuItem,
-            this.vCardToolStripMenuItem});
+            this.vCardToolStripMenuItem,
+            this.deleteToolStripMenuItem});
             this.ctxMenuRoster.Name = "ctxMenuRoster";
-            this.ctxMenuRoster.Size = new System.Drawing.Size(121, 70);
+            this.ctxMenuRoster.Size = new System.Drawing.Size(153, 114);
             // 
             // chatToolStripMenuItem
             // 
@@ -296,6 +292,21 @@
             this.presenceDoNotDisturbToolStripMenuItem.Text = "do not disturb";
             this.presenceDoNotDisturbToolStripMenuItem.Click += new System.EventHandler(this.presenceDoNotDisturbToolStripMenuItem_Click);
             // 
+            // contractsToolStripMenuItem
+            // 
+            this.contractsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem});
+            this.contractsToolStripMenuItem.Name = "contractsToolStripMenuItem";
+            this.contractsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.contractsToolStripMenuItem.Text = "Contracts";
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
+            // 
             // groupChatToolStripMenuItem
             // 
             this.groupChatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -320,7 +331,6 @@
             this.tsmiEnterRoomTest.Click += new System.EventHandler(this.tsmiEnterRoomTest_Click);
             // 
             // settingToolStripMenuItem
-<<<<<<< HEAD
             // 
             this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resetDatabaseToolStripMenuItem});
@@ -360,15 +370,12 @@
             this.xmppClient.OnRegister += new System.EventHandler<Matrix.EventArgs>(this.xmppClient_OnRegister);
             this.xmppClient.OnRegisterError += new System.EventHandler<Matrix.Xmpp.Client.IqEventArgs>(this.xmppClient_OnRegisterError);
             this.xmppClient.OnBind += new System.EventHandler<Matrix.JidEventArgs>(this.xmppClient_OnBind);
-            this.xmppClient.OnBeforeSasl += new System.EventHandler<Matrix.Xmpp.Sasl.SaslEventArgs>(this.xmppClient_OnBeforeSasl);
             this.xmppClient.OnBeforeSendPresence += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.xmppClient_OnBeforeSendPresence);
             this.xmppClient.OnReceiveXml += new System.EventHandler<Matrix.TextEventArgs>(this.xmppClient_OnReceiveXml);
             this.xmppClient.OnSendXml += new System.EventHandler<Matrix.TextEventArgs>(this.xmppClient_OnSendXml);
             this.xmppClient.OnStreamError += new System.EventHandler<Matrix.StreamErrorEventArgs>(this.xmppClient_OnStreamError);
             this.xmppClient.OnError += new System.EventHandler<Matrix.ExceptionEventArgs>(this.xmppClient_OnError);
             this.xmppClient.OnValidateCertificate += new System.EventHandler<Matrix.CertificateEventArgs>(this.xmppClient_OnValidateCertificate);
-            this.xmppClient.OnLogin += new System.EventHandler<Matrix.EventArgs>(this.xmppClient_OnLogin);
-            this.xmppClient.OnAuthError += new System.EventHandler<Matrix.Xmpp.Sasl.SaslEventArgs>(this.xmppClient_OnAuthError);
             this.xmppClient.OnClose += new System.EventHandler<Matrix.EventArgs>(this.xmppClient_OnClose);
             // 
             // mucManager
@@ -385,36 +392,12 @@
             this.presenceManager.XmppClient = this.xmppClient;
             this.presenceManager.OnSubscribe += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.presenceManager_OnSubscribe);
             // 
-            // contractsToolStripMenuItem
-=======
->>>>>>> origin/master
+            // deleteToolStripMenuItem
             // 
-            this.contractsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addToolStripMenuItem});
-            this.contractsToolStripMenuItem.Name = "contractsToolStripMenuItem";
-            this.contractsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-            this.contractsToolStripMenuItem.Text = "Contracts";
-            // 
-            // addToolStripMenuItem
-            // 
-            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.addToolStripMenuItem.Text = "Add";
-            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
-            // 
-            // mucManager
-            // 
-            this.mucManager.XmppClient = null;
-            // 
-            // pubSubManager
-            // 
-            this.pubSubManager.XmppClient = null;
-            this.pubSubManager.OnEvent += new System.EventHandler<Matrix.Xmpp.Client.MessageEventArgs>(this.pubSubManager1_OnEvent);
-            // 
-            // presenceManager
-            // 
-            this.presenceManager.XmppClient = null;
-            this.presenceManager.OnSubscribe += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.presenceManager_OnSubscribe);
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -479,6 +462,7 @@
         private System.Windows.Forms.ToolStripMenuItem resetDatabaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contractsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
     }
 }
 
