@@ -33,7 +33,7 @@ namespace MiniClient
             _roomJid = roomJid;
             _xmppClient = xmppClient;
             _nickname = nickname;
-
+            Text = roomJid.User + " Group";;
             mm = new MucManager(xmppClient);
 
             // Setup new Message Callback using the MessageFilter
@@ -139,9 +139,6 @@ namespace MiniClient
             sqlCeCommand.CommandText = q.ToString();
             sqlCeCommand.ExecuteNonQuery();
             connection.Close();
-            //local_history.InsertQuery(true, _xmppClient.Username, _xmppClient.XmppDomain,
-            //    _roomJid.Bare, person + ": " + body, dt);
-          
         }
       
         private void PresenceCallback(object sender, PresenceEventArgs e)
@@ -166,13 +163,13 @@ namespace MiniClient
                 {
                     int imageIdx = Util.GetRosterImageIndex(e.Presence);
                     lvi.ImageIndex = imageIdx;
-                    lvi.SubItems[1].Text = (e.Presence.Status ?? "");
+                    //lvi.SubItems[1].Text = (e.Presence.Status ?? "");
                     
                     var u = e.Presence.MucUser;
                     if (u != null)
                     {
-                        lvi.SubItems[2].Text = u.Item.Affiliation.ToString();
-                        lvi.SubItems[3].Text = u.Item.Role.ToString();
+                        lvi.SubItems[1].Text = u.Item.Affiliation.ToString();
+                        lvi.SubItems[2].Text = u.Item.Role.ToString();
                     }
                 }
             }
@@ -182,7 +179,7 @@ namespace MiniClient
                 
                 var lv = new ListViewItem(e.Presence.From.Resource) {Tag = e.Presence.From.ToString()};
 
-                lv.SubItems.Add(e.Presence.Status ?? "");
+                //lv.SubItems.Add(e.Presence.Status ?? "");
                 
                 var u = e.Presence.MucUser;
                 if (u != null)
@@ -208,6 +205,9 @@ namespace MiniClient
         DateTime dtTemp = new DateTime();
         private void IncomingMessage(Matrix.Xmpp.Client.Message msg)
         {
+            try
+            {
+
             if (msg.Type == MessageType.Error)
             {
                 //Handle errors here
@@ -277,6 +277,12 @@ namespace MiniClient
                 rtfChat.SelectionColor = Color.Black;
                 rtfChat.AppendText(msg.Body);
                 rtfChat.AppendText("\r\n");
+            }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 

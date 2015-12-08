@@ -33,9 +33,11 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.btnSignOut = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabGroup = new System.Windows.Forms.TabControl();
             this.tabContacts = new System.Windows.Forms.TabPage();
             this.listContacts = new System.Windows.Forms.ListView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.listGroup = new System.Windows.Forms.ListView();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.listEvents = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -46,7 +48,6 @@
             this.ctxMenuRoster = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.vCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,15 +63,15 @@
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiEnterRoom = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiEnterRoomTest = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmppClient = new Matrix.Xmpp.Client.XmppClient();
             this.mucManager = new Matrix.Xmpp.Client.MucManager();
             this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
             this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
-            this.tabControl1.SuspendLayout();
+            this.tabGroup.SuspendLayout();
             this.tabContacts.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.ctxMenuRoster.SuspendLayout();
@@ -87,19 +88,20 @@
             this.btnSignOut.UseVisualStyleBackColor = true;
             this.btnSignOut.Click += new System.EventHandler(this.cmdDisconnect_Click);
             // 
-            // tabControl1
+            // tabGroup
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabContacts);
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(10, 56);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(505, 421);
-            this.tabControl1.TabIndex = 4;
+            this.tabGroup.Controls.Add(this.tabContacts);
+            this.tabGroup.Controls.Add(this.tabPage3);
+            this.tabGroup.Controls.Add(this.tabPage1);
+            this.tabGroup.Controls.Add(this.tabPage2);
+            this.tabGroup.Location = new System.Drawing.Point(10, 56);
+            this.tabGroup.Name = "tabGroup";
+            this.tabGroup.SelectedIndex = 0;
+            this.tabGroup.Size = new System.Drawing.Size(663, 421);
+            this.tabGroup.TabIndex = 4;
             // 
             // tabContacts
             // 
@@ -107,7 +109,7 @@
             this.tabContacts.Location = new System.Drawing.Point(4, 22);
             this.tabContacts.Name = "tabContacts";
             this.tabContacts.Padding = new System.Windows.Forms.Padding(3);
-            this.tabContacts.Size = new System.Drawing.Size(497, 395);
+            this.tabContacts.Size = new System.Drawing.Size(655, 395);
             this.tabContacts.TabIndex = 2;
             this.tabContacts.Text = "Contacts";
             this.tabContacts.UseVisualStyleBackColor = true;
@@ -118,10 +120,35 @@
             this.listContacts.Location = new System.Drawing.Point(3, 3);
             this.listContacts.Name = "listContacts";
             this.listContacts.ShowItemToolTips = true;
-            this.listContacts.Size = new System.Drawing.Size(491, 389);
+            this.listContacts.Size = new System.Drawing.Size(649, 389);
             this.listContacts.TabIndex = 0;
             this.listContacts.UseCompatibleStateImageBehavior = false;
+            this.listContacts.DoubleClick += new System.EventHandler(this.listContacts_DoubleClick);
             this.listContacts.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listContacts_MouseUp);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.listGroup);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(655, 395);
+            this.tabPage3.TabIndex = 3;
+            this.tabPage3.Text = "Group";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // listGroup
+            // 
+            this.listGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listGroup.FullRowSelect = true;
+            this.listGroup.GridLines = true;
+            this.listGroup.Location = new System.Drawing.Point(3, 3);
+            this.listGroup.Name = "listGroup";
+            this.listGroup.Size = new System.Drawing.Size(649, 389);
+            this.listGroup.TabIndex = 0;
+            this.listGroup.UseCompatibleStateImageBehavior = false;
+            this.listGroup.View = System.Windows.Forms.View.List;
+            this.listGroup.DoubleClick += new System.EventHandler(this.listGroup_DoubleClick);
             // 
             // tabPage1
             // 
@@ -129,7 +156,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(497, 395);
+            this.tabPage1.Size = new System.Drawing.Size(655, 395);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Events";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -142,7 +169,7 @@
             this.listEvents.ItemHeight = 15;
             this.listEvents.Location = new System.Drawing.Point(3, 3);
             this.listEvents.Name = "listEvents";
-            this.listEvents.Size = new System.Drawing.Size(491, 389);
+            this.listEvents.Size = new System.Drawing.Size(649, 389);
             this.listEvents.TabIndex = 0;
             // 
             // tabPage2
@@ -151,7 +178,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(497, 395);
+            this.tabPage2.Size = new System.Drawing.Size(655, 395);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Debug XML";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -162,7 +189,7 @@
             this.rtfDebug.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtfDebug.Location = new System.Drawing.Point(3, 3);
             this.rtfDebug.Name = "rtfDebug";
-            this.rtfDebug.Size = new System.Drawing.Size(491, 389);
+            this.rtfDebug.Size = new System.Drawing.Size(649, 389);
             this.rtfDebug.TabIndex = 0;
             this.rtfDebug.Text = "";
             // 
@@ -170,7 +197,7 @@
             // 
             this.statusStrip1.Location = new System.Drawing.Point(0, 480);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(530, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(688, 22);
             this.statusStrip1.TabIndex = 8;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -199,30 +226,22 @@
             this.ctxMenuRoster.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chatToolStripMenuItem,
             this.sendFileToolStripMenuItem,
-            this.vCardToolStripMenuItem,
             this.editToolStripMenuItem});
             this.ctxMenuRoster.Name = "ctxMenuRoster";
-            this.ctxMenuRoster.Size = new System.Drawing.Size(121, 92);
+            this.ctxMenuRoster.Size = new System.Drawing.Size(122, 70);
             // 
             // chatToolStripMenuItem
             // 
             this.chatToolStripMenuItem.Name = "chatToolStripMenuItem";
-            this.chatToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
-            this.chatToolStripMenuItem.Text = "chat";
+            this.chatToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.chatToolStripMenuItem.Text = "Chat";
             this.chatToolStripMenuItem.Click += new System.EventHandler(this.chatToolStripMenuItem_Click);
             // 
             // sendFileToolStripMenuItem
             // 
             this.sendFileToolStripMenuItem.Name = "sendFileToolStripMenuItem";
-            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
-            this.sendFileToolStripMenuItem.Text = "send File";
-            // 
-            // vCardToolStripMenuItem
-            // 
-            this.vCardToolStripMenuItem.Name = "vCardToolStripMenuItem";
-            this.vCardToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
-            this.vCardToolStripMenuItem.Text = "VCard";
-            this.vCardToolStripMenuItem.Click += new System.EventHandler(this.vCardToolStripMenuItem_Click);
+            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.sendFileToolStripMenuItem.Text = "Send File";
             // 
             // editToolStripMenuItem
             // 
@@ -230,20 +249,20 @@
             this.updateToolStripMenuItem,
             this.deleteToolStripMenuItem1});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // updateToolStripMenuItem
             // 
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.updateToolStripMenuItem.Text = "Rename";
             this.updateToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem1
             // 
             this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
-            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -266,7 +285,7 @@
             this.settingToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(530, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(688, 24);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -335,8 +354,7 @@
             // groupChatToolStripMenuItem
             // 
             this.groupChatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiEnterRoom,
-            this.tsmiEnterRoomTest});
+            this.tsmiEnterRoom});
             this.groupChatToolStripMenuItem.Name = "groupChatToolStripMenuItem";
             this.groupChatToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.groupChatToolStripMenuItem.Text = "Group Chat";
@@ -344,16 +362,9 @@
             // tsmiEnterRoom
             // 
             this.tsmiEnterRoom.Name = "tsmiEnterRoom";
-            this.tsmiEnterRoom.Size = new System.Drawing.Size(337, 22);
+            this.tsmiEnterRoom.Size = new System.Drawing.Size(208, 22);
             this.tsmiEnterRoom.Text = "Enter or create chat room";
             this.tsmiEnterRoom.Click += new System.EventHandler(this.tsmiEnterRoom_Click);
-            // 
-            // tsmiEnterRoomTest
-            // 
-            this.tsmiEnterRoomTest.Name = "tsmiEnterRoomTest";
-            this.tsmiEnterRoomTest.Size = new System.Drawing.Size(337, 22);
-            this.tsmiEnterRoomTest.Text = "Enter chat room test@conference.ag-software.net";
-            this.tsmiEnterRoomTest.Click += new System.EventHandler(this.tsmiEnterRoomTest_Click);
             // 
             // settingToolStripMenuItem
             // 
@@ -421,20 +432,23 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 502);
+            this.ClientSize = new System.Drawing.Size(688, 502);
             this.Controls.Add(this.cmdVcard);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabGroup);
             this.Controls.Add(this.cmdPubSub);
             this.Controls.Add(this.btnSignOut);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Xmpp Client Chat";
+            this.Text = "Home";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmMain_FormClosed);
-            this.tabControl1.ResumeLayout(false);
+            this.tabGroup.ResumeLayout(false);
             this.tabContacts.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.ctxMenuRoster.ResumeLayout(false);
@@ -448,7 +462,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnSignOut;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabGroup;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ListBox listEvents;
         private System.Windows.Forms.TabPage tabPage2;
@@ -464,12 +478,10 @@
         private System.Windows.Forms.ToolStripMenuItem chatToolStripMenuItem;
         private Matrix.Xmpp.Client.PresenceManager presenceManager;
         private System.Windows.Forms.ToolStripMenuItem sendFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem vCardToolStripMenuItem;
         private System.Windows.Forms.Button cmdVcard;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem groupChatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsmiEnterRoom;
-        private System.Windows.Forms.ToolStripMenuItem tsmiEnterRoomTest;
         private System.Windows.Forms.ToolStripMenuItem presenseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem presenceOnlineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem presenceChatToolStripMenuItem1;
@@ -483,6 +495,8 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.ListView listGroup;
     }
 }
 

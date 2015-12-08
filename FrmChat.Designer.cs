@@ -29,6 +29,7 @@ namespace MiniClient
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmChat));
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.cmdSend = new System.Windows.Forms.Button();
@@ -118,8 +119,10 @@ namespace MiniClient
             this.Controls.Add(this.cmdSend);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusBar1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmChat";
             this.Text = "frmChat";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmChat_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

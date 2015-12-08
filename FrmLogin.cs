@@ -22,6 +22,16 @@ namespace MiniClient
         public string UserName { get { return txtUsername.Text; } }
         public string Password { get { return txtPassword.Text; } }
         public string XmppServer { get { return txtXmppServer.Text; } }
+        private const int CP_NOCLOSE_BUTTON = 0x200;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams myCp = base.CreateParams;
+                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
+                return myCp;
+            }
+        }
 
         public FrmLogin()
         {
@@ -30,7 +40,7 @@ namespace MiniClient
 
             FrmLogin.Instance = this;
             FrmLogin.FrmMain = new FrmMain();
-
+            FrmLogin.FrmMain.MdiParent = FrmParent.Instance;
 
             this.xmppClient.OnBeforeSasl += new EventHandler<Matrix.Xmpp.Sasl.SaslEventArgs>(xmppClient_OnBeforeSasl);
             this.xmppClient.OnAuthError += new EventHandler<Matrix.Xmpp.Sasl.SaslEventArgs>(xmppClient_OnAuthError);
@@ -82,6 +92,7 @@ namespace MiniClient
         private void FrmLogin_FormClosed(object sender, FormClosedEventArgs e)
         {
             Util.SaveSettings(_settings);
+            FrmParent.Instance.Dispose();
         }
 
         private void FrmLogin_Load(object sender, EventArgs e)
