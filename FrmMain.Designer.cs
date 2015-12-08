@@ -47,6 +47,9 @@
             this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.vCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdVcard = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.presenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +69,6 @@
             this.mucManager = new Matrix.Xmpp.Client.MucManager();
             this.pubSubManager = new Matrix.Xmpp.Client.PubSubManager();
             this.presenceManager = new Matrix.Xmpp.Client.PresenceManager();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabContacts.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -198,9 +200,9 @@
             this.chatToolStripMenuItem,
             this.sendFileToolStripMenuItem,
             this.vCardToolStripMenuItem,
-            this.deleteToolStripMenuItem});
+            this.editToolStripMenuItem});
             this.ctxMenuRoster.Name = "ctxMenuRoster";
-            this.ctxMenuRoster.Size = new System.Drawing.Size(153, 114);
+            this.ctxMenuRoster.Size = new System.Drawing.Size(121, 92);
             // 
             // chatToolStripMenuItem
             // 
@@ -221,6 +223,29 @@
             this.vCardToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.vCardToolStripMenuItem.Text = "VCard";
             this.vCardToolStripMenuItem.Click += new System.EventHandler(this.vCardToolStripMenuItem_Click);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateToolStripMenuItem,
+            this.deleteToolStripMenuItem1});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // updateToolStripMenuItem
+            // 
+            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Text = "Rename";
+            this.updateToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // deleteToolStripMenuItem1
+            // 
+            this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem1.Text = "Delete";
+            this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // cmdVcard
             // 
@@ -392,13 +417,6 @@
             this.presenceManager.XmppClient = this.xmppClient;
             this.presenceManager.OnSubscribe += new System.EventHandler<Matrix.Xmpp.Client.PresenceEventArgs>(this.presenceManager_OnSubscribe);
             // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -462,7 +480,9 @@
         private System.Windows.Forms.ToolStripMenuItem resetDatabaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contractsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
     }
 }
 

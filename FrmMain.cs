@@ -34,7 +34,7 @@ namespace MiniClient
         const int WM_VSCROLL = 0x115;
         const int SB_BOTTOM = 7;
 
-        private readonly Dictionary<string, ListViewGroup>  _dictContactGroups = new Dictionary<string, ListViewGroup>();
+        public Dictionary<string, ListViewGroup>  _dictContactGroups = new Dictionary<string, ListViewGroup>();
         private readonly Dictionary<Jid, RosterItem>        _dictContats = new Dictionary<Jid, RosterItem>();
 
         FileTransferManager fm = new FileTransferManager();
@@ -76,8 +76,6 @@ namespace MiniClient
             this.xmppClient.OnRegisterError+=new EventHandler<IqEventArgs>(xmppClient_OnRegisterError);
             this.xmppClient.OnRegisterInformation+=new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
             this.xmppClient.OnBeforeSendPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
-
-
         }
 
         void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
@@ -125,9 +123,13 @@ namespace MiniClient
 
         private void xmppClient_OnRosterItem(object sender, Matrix.Xmpp.Roster.RosterEventArgs e)
         {
-            DisplayEvent(string.Format( "OnRosterItem\t{0}\t{1}", e.RosterItem.Jid, e.RosterItem.Name )); 
+            DisplayEvent(string.Format( "OnRosterItem\t{0}\t{1}", e.RosterItem.Jid, e.RosterItem.Name ));
 
-            if (e.RosterItem.Subscription != Subscription.Remove)
+            if (e.RosterItem.Ask == Matrix.Xmpp.Roster.Ask.Unsubscribe)
+            {
+                
+            }
+            else if (e.RosterItem.Subscription != Subscription.Remove)
             {
                 // set a default group name
                 string groupname = "Contacts";
@@ -137,6 +139,7 @@ namespace MiniClient
                 if (e.RosterItem.HasGroups)
                     groupname = e.RosterItem.GetGroups()[0];
 
+                
                 if (!_dictContactGroups.ContainsKey(groupname))
                 {
                     var newGroup = new ListViewGroup(groupname);
@@ -152,7 +155,8 @@ namespace MiniClient
                     listContacts.Items.RemoveByKey(e.RosterItem.Jid);
                 }
 
-                if (listContacts.Items.Find(e.RosterItem.Name ?? e.RosterItem.Jid, true).Count() == 0)
+                var contract = listContacts.Items.Find(e.RosterItem.Jid, true);
+                if (contract.Count() == 0)
                 {
                     //var newItem = new ListViewItem(e.RosterItem.Jid, listGroup) {Name = e.RosterItem.Jid};
                     var newItem = new RosterListViewItem(e.RosterItem.Name ?? e.RosterItem.Jid, 0, listGroup) { Name = e.RosterItem.Jid.Bare };
@@ -161,6 +165,16 @@ namespace MiniClient
 
                     listContacts.Items.Add(newItem);
                 }
+
+                if (contract.Count() > 0)
+                {
+                    listContacts.Items[listContacts.Items.IndexOf(contract[0])].Text = e.RosterItem.Name;
+                    listContacts.Items[listContacts.Items.IndexOf(contract[0])].Group = listGroup;
+                }
+            }
+            else if (e.RosterItem.Subscription == Subscription.Remove)
+            {
+                listContacts.Items.RemoveByKey(e.RosterItem.Jid);
             }
         }
 
@@ -256,6 +270,12 @@ namespace MiniClient
             xmppClient.Close();
 
             this.Hide();
+            for (int ix = Application.OpenForms.Count - 1; ix > 0; --ix)
+            {
+                var frm = Application.OpenForms[ix];
+                if (frm.GetType() != typeof(FrmMain)) frm.Close();
+            }
+
             FrmLogin.Instance.Show();
         }
 
@@ -335,8 +355,7 @@ namespace MiniClient
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-           
-
+            xmppClient.Close();
             FrmLogin.Instance.Close();
         }
 
@@ -502,15 +521,16 @@ namespace MiniClient
 
         private void addToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            var input = new FrmAddUser();
+            var input = new FrmAddUser(_dictContactGroups, true);
             if (input.ShowDialog() == DialogResult.OK)
             {
-                //var rm = new RosterManager(xmppClient);
+                _dictContactGroups = input.DictContactGroups;
+                var rm = new RosterManager(xmppClient);
                 Jid jid = input.Address;
-                //rm.Add(jid, input.Name);
+                rm.Add(jid, input.Name, input.Group);
 
                 var pm = new PresenceManager(xmppClient);
-                string reason = "It's " + xmppClient.Username;
+                string reason = input.Message;
                 pm.Subscribe(jid, reason, input.Name);
             }
 
@@ -523,10 +543,29 @@ namespace MiniClient
             {
                 var item = listContacts.SelectedItems[0];
                 var rm = new RosterManager(xmppClient);
-                Jid jid = item.Text;
+                Jid jid = item.Name;
                 rm.Remove(jid);
             }
             
         }
+
+        private void editToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                var input = new FrmAddUser(_dictContactGroups, false);
+                input.Name = item.Text;
+                input.Address = item.Name;
+                input.Group = item.Group.Header;
+                if (input.ShowDialog() == DialogResult.OK)
+                {
+                    var rm = new RosterManager(xmppClient);
+                    Jid jid = input.Address;
+                    rm.Update(jid, input.Name, input.Group);
+                }
+            }
+        }
+
     }
 }

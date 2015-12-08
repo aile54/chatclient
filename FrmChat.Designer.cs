@@ -93,6 +93,7 @@ namespace MiniClient
             this.rtfChat.Size = new System.Drawing.Size(471, 144);
             this.rtfChat.TabIndex = 10;
             this.rtfChat.Text = "";
+            this.rtfChat.TextChanged += new System.EventHandler(this.rtfChat_TextChanged);
             // 
             // btnHistory
             // 
@@ -107,6 +108,7 @@ namespace MiniClient
             // 
             // FrmChat
             // 
+            this.AcceptButton = this.cmdSend;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(471, 260);
             this.Controls.Add(this.rtfChat);

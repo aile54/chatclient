@@ -20,3 +20,5 @@ E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.XtraForm1.reso
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.csproj.GenerateResource.Cache
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.pdb
+E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.csprojResolveAssemblyReference.cache
+E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe.licenses
