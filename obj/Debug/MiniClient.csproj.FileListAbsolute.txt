@@ -1,4 +1,3 @@
-E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\ClientDatabase.sdf
 E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\MiniClient.exe.config
 E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\MiniClient.exe
 E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\MiniClient.pdb
@@ -9,6 +8,7 @@ E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmGroupChat.r
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmHistoryTransaction.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmInputBox.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmLogin.resources
+E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmParent.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmReceiveFile.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmSendFile.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.FrmPubSub.resources
@@ -18,7 +18,7 @@ E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.InputDialog.re
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.Properties.Resources.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.XtraForm1.resources
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.csproj.GenerateResource.Cache
+E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe.licenses
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe
 E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.pdb
-E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.csprojResolveAssemblyReference.cache
-E:\01. Projects\MiniClient - Copy\chatclient\obj\Debug\MiniClient.exe.licenses
+E:\01. Projects\MiniClient - Copy\chatclient\bin\Debug\ClientDatabase.sdf

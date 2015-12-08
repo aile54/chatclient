@@ -21,6 +21,8 @@ using Subscription=Matrix.Xmpp.Roster.Subscription;
 using EventArgs=Matrix.EventArgs;
 using MiniClient.ClientDatabaseTableAdapters;
 using System.Data.SqlServerCe;
+using System.Data;
+using Matrix.Xmpp.Vcard;
 
 namespace MiniClient
 {
@@ -39,15 +41,25 @@ namespace MiniClient
 
         FileTransferManager fm = new FileTransferManager();
         XmppClient xmppClient;
+        private const int CP_NOCLOSE_BUTTON = 0x200;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams myCp = base.CreateParams;
+                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
+                return myCp;
+            }
+        }
 
+        public static string UserName = string.Empty;
         public FrmMain()
         {
             InitializeComponent();
 
             RegisterCustomElements();
-           
+            //frmParent.Show();
             InitContactList();
-
             xmppClient = FrmLogin.Instance.xmppClient;
             fm.XmppClient = FrmLogin.Instance.xmppClient;
             fm.OnFile += fm_OnFile;
@@ -76,6 +88,34 @@ namespace MiniClient
             this.xmppClient.OnRegisterError+=new EventHandler<IqEventArgs>(xmppClient_OnRegisterError);
             this.xmppClient.OnRegisterInformation+=new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
             this.xmppClient.OnBeforeSendPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
+            this.Load += new EventHandler(FrmMain_Load);
+        }
+
+        void FrmMain_Load(object sender, System.EventArgs e)
+        {
+            InitGroupList();
+        }
+
+        private void InitGroupList()
+        {
+            DataTable dt = new DataTable();
+            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
+            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            connection.Open();
+            SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select GroupName from HistoryTransaction 
+                                            where AccountName = '{0}' and ServerID = '{1}' and IsGroup = '{2}' Group By GroupName",
+                                            xmppClient.Username, xmppClient.XmppDomain, "1"), connection);
+            adapter.Fill(dt);
+            connection.Close();
+            foreach (DataRow item in dt.Rows)
+            {
+                if (item[0].ToString() != string.Empty)
+                {
+                    Jid room = new Jid(item[0].ToString());
+                    var newItem = new RosterListViewItem(room.User ?? room.Bare, 0, null) { Name = room.Bare };
+                    listGroup.Items.Add(newItem);
+                }
+            }
         }
 
         void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
@@ -356,7 +396,14 @@ namespace MiniClient
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             xmppClient.Close();
-            FrmLogin.Instance.Close();
+            this.Hide();
+            for (int ix = Application.OpenForms.Count - 1; ix > 0; --ix)
+            {
+                var frm = Application.OpenForms[ix];
+                if (frm.GetType() != typeof(FrmMain)) frm.Close();
+            }
+
+            FrmLogin.Instance.Show();
         }
 
         private void chatToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -368,6 +415,7 @@ namespace MiniClient
                 {
                     var roomJid = new Jid(item.Name);
                     var f = new FrmChat(roomJid, xmppClient, item.Text);
+                    f.MdiParent = FrmParent.Instance;
                     f.Show();
                 }
             }
@@ -458,8 +506,10 @@ namespace MiniClient
                 input = new FrmInputBox("Enter the Jid of the room to join (e.g. jdev@conference.jabber.org)", "Room");
                 if (input.ShowDialog() == DialogResult.OK)
                 {
-                    var roomJid = new Jid(input.Result == string.Empty ? "kddi_airwater-gas-management@conference.vitenet1.net" : input.Result);//input.Result);
-                    new FrmGroupChat(xmppClient, roomJid, nickname).Show();
+                    var roomJid = new Jid(input.Result);
+                    var f = new FrmGroupChat(xmppClient, roomJid, nickname);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
                 }
             }
         }
@@ -567,5 +617,52 @@ namespace MiniClient
             }
         }
 
+        private void listContacts_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                if (!Util.ChatForms.ContainsKey(item.Name))
+                {
+                    var roomJid = new Jid(item.Name);
+                    FrmChat f = new FrmChat(roomJid, xmppClient, item.Text);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
+                }
+            }
+        }
+
+        ListViewItem Group = new ListViewItem();
+        private void listGroup_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (listGroup.SelectedItems.Count > 0)
+            {
+                GetMyVcard(listGroup.SelectedItems[0]);
+            }
+        }
+
+        private void GetMyVcard(ListViewItem group)
+        {
+            Group = group;
+            var viq = new VcardIq { Type = Matrix.Xmpp.IqType.Get };
+            xmppClient.IqFilter.SendIq(viq, VcardResponse);
+        }
+
+        private void VcardResponse(object sender, IqEventArgs e)
+        {
+            if (e.Iq.Type == Matrix.Xmpp.IqType.Result)
+            {
+                var vc = e.Iq.Query as Vcard;
+                UserName = vc.Fullname;
+
+                if (!Util.ChatForms.ContainsKey(Group.Name))
+                {
+                    var roomJid = new Jid(Group.Name);
+                    var f = new FrmGroupChat(xmppClient, roomJid, UserName);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
+                }
+            }
+        }
     }
 }

@@ -29,11 +29,11 @@ namespace MiniClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmGroupChat));
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lvwRoster = new System.Windows.Forms.ListView();
             this.headerNickname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.headerStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.headerRole = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.headerAffiliation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ilsRoster = new System.Windows.Forms.ImageList(this.components);
@@ -87,7 +87,6 @@ namespace MiniClient
             // 
             this.lvwRoster.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.headerNickname,
-            this.headerStatus,
             this.headerRole,
             this.headerAffiliation});
             this.lvwRoster.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -104,24 +103,26 @@ namespace MiniClient
             this.headerNickname.Text = "Nickname";
             this.headerNickname.Width = 82;
             // 
-            // headerStatus
-            // 
-            this.headerStatus.Text = "Status";
-            this.headerStatus.Width = 73;
-            // 
             // headerRole
             // 
             this.headerRole.Text = "Role";
+            this.headerRole.Width = 75;
             // 
             // headerAffiliation
             // 
             this.headerAffiliation.Text = "Affiliation";
+            this.headerAffiliation.Width = 83;
             // 
             // ilsRoster
             // 
-            this.ilsRoster.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.ilsRoster.ImageSize = new System.Drawing.Size(16, 16);
+            this.ilsRoster.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilsRoster.ImageStream")));
             this.ilsRoster.TransparentColor = System.Drawing.Color.Transparent;
+            this.ilsRoster.Images.SetKeyName(0, "");
+            this.ilsRoster.Images.SetKeyName(1, "");
+            this.ilsRoster.Images.SetKeyName(2, "");
+            this.ilsRoster.Images.SetKeyName(3, "");
+            this.ilsRoster.Images.SetKeyName(4, "");
+            this.ilsRoster.Images.SetKeyName(5, "");
             // 
             // splitContainer2
             // 
@@ -268,8 +269,10 @@ namespace MiniClient
             this.ClientSize = new System.Drawing.Size(781, 441);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusBar1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmGroupChat";
             this.Text = "Group Chat";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmGroupChat_FormClosed);
             this.Load += new System.EventHandler(this.FrmGroupChat_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -295,7 +298,6 @@ namespace MiniClient
         private System.Windows.Forms.RichTextBox rtfSend;
         private System.Windows.Forms.ListView lvwRoster;
         private System.Windows.Forms.ColumnHeader headerNickname;
-        private System.Windows.Forms.ColumnHeader headerStatus;
         private System.Windows.Forms.Button cmdSend;
         private System.Windows.Forms.ImageList ilsRoster;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;

@@ -52,7 +52,7 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.EditValue = "lmhieu@vitenet1.net";
+            this.txtUsername.EditValue = "";
             this.txtUsername.Location = new System.Drawing.Point(88, 33);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(164, 20);
@@ -135,7 +135,7 @@
             this.Name = "FrmLogin";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "XMPP Chat Client";
+            this.Text = "Login";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmLogin_FormClosed);
             this.Load += new System.EventHandler(this.FrmLogin_Load);
             ((System.ComponentModel.ISupportInitialize)(this.txtUsername.Properties)).EndInit();
