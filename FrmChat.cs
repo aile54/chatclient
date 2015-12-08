@@ -284,5 +284,11 @@ namespace MiniClient
         {
             new FrmHistoryTransaction(_xmppClient, _jid, _nickname, false).ShowDialog();
         }
+
+        private void rtfChat_TextChanged(object sender, EventArgs e)
+        {
+            rtfChat.SelectionStart = rtfChat.Text.Length; //Set the current caret position at the end
+            rtfChat.ScrollToCaret(); //Now scroll it automatically
+        }
     }
 }

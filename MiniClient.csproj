@@ -90,6 +90,12 @@
       <DependentUpon>ClientDatabase.xsd</DependentUpon>
     </Compile>
     <Compile Include="Cryptography.cs" />
+    <Compile Include="FrmAddUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAddUser.Designer.cs">
+      <DependentUpon>FrmAddUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmChat.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,6 +171,9 @@
     <Compile Include="XtraForm1.Designer.cs">
       <DependentUpon>XtraForm1.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FrmAddUser.resx">
+      <DependentUpon>FrmAddUser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmChat.resx">
       <DependentUpon>FrmChat.cs</DependentUpon>
     </EmbeddedResource>
@@ -245,6 +254,7 @@
     <Content Include="ClientDatabase.sdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Matrix.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

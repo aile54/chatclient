@@ -45,9 +45,9 @@ namespace MiniClient
             this.txtSubject = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.rtfSend = new System.Windows.Forms.RichTextBox();
-            this.cmdSend = new System.Windows.Forms.Button();
-            this.btnHistory = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnHistory = new System.Windows.Forms.Button();
+            this.cmdSend = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -171,6 +171,7 @@ namespace MiniClient
             this.rtfChat.Size = new System.Drawing.Size(477, 303);
             this.rtfChat.TabIndex = 3;
             this.rtfChat.Text = "";
+            this.rtfChat.TextChanged += new System.EventHandler(this.rtfChat_TextChanged);
             // 
             // label1
             // 
@@ -227,16 +228,15 @@ namespace MiniClient
             this.rtfSend.TabIndex = 0;
             this.rtfSend.Text = "";
             // 
-            // cmdSend
+            // panel1
             // 
-            this.cmdSend.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.cmdSend.Location = new System.Drawing.Point(396, 0);
-            this.cmdSend.Name = "cmdSend";
-            this.cmdSend.Size = new System.Drawing.Size(80, 24);
-            this.cmdSend.TabIndex = 1;
-            this.cmdSend.Text = "&Send";
-            this.cmdSend.UseVisualStyleBackColor = true;
-            this.cmdSend.Click += new System.EventHandler(this.cmdSend_Click);
+            this.panel1.Controls.Add(this.btnHistory);
+            this.panel1.Controls.Add(this.cmdSend);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 47);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(477, 24);
+            this.panel1.TabIndex = 1;
             // 
             // btnHistory
             // 
@@ -249,18 +249,20 @@ namespace MiniClient
             this.btnHistory.UseVisualStyleBackColor = true;
             this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
             // 
-            // panel1
+            // cmdSend
             // 
-            this.panel1.Controls.Add(this.btnHistory);
-            this.panel1.Controls.Add(this.cmdSend);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 47);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(477, 24);
-            this.panel1.TabIndex = 1;
+            this.cmdSend.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.cmdSend.Location = new System.Drawing.Point(396, 0);
+            this.cmdSend.Name = "cmdSend";
+            this.cmdSend.Size = new System.Drawing.Size(80, 24);
+            this.cmdSend.TabIndex = 1;
+            this.cmdSend.Text = "&Send";
+            this.cmdSend.UseVisualStyleBackColor = true;
+            this.cmdSend.Click += new System.EventHandler(this.cmdSend_Click);
             // 
             // FrmGroupChat
             // 
+            this.AcceptButton = this.cmdSend;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(781, 441);
