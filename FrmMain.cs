@@ -33,31 +33,6 @@ namespace MiniClient
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr window, int message, int wparam, int lparam);
 
-        public const int FLASHW_STOP = 0;
-        public const int FLASHW_CAPTION = 0x00000001;
-        public const int FLASHW_TRAY = 0x00000002;
-        public const int FLASHW_ALL = (FLASHW_CAPTION | FLASHW_TRAY);
-        public const int FLASHW_TIMER = 0x00000004;
-        public const int FLASHW_TIMERNOFG = 0x0000000C;
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct FLASHWINFO
-        {
-            [MarshalAs(UnmanagedType.U4)]
-            public int cbSize;
-            public IntPtr hwnd;
-            [MarshalAs(UnmanagedType.U4)]
-            public int dwFlags;
-            [MarshalAs(UnmanagedType.U4)]
-            public int uCount;
-            [MarshalAs(UnmanagedType.U4)]
-            public int dwTimeout;
-        }
-
-        [DllImport("user32.dll")]
-        public static extern bool FlashWindowEx([MarshalAs(UnmanagedType.Struct)]
-                  ref FLASHWINFO pfwi);
-
         const int WM_VSCROLL = 0x115;
         const int SB_BOTTOM = 7;
 
@@ -144,7 +119,7 @@ namespace MiniClient
 
 
             DiscoManager _dm = new DiscoManager(xmppClient);
-            _dm.DiscoverItems("conference.vitenet1.net", new EventHandler<IqEventArgs>(DiscoItemsResult));
+            _dm.DiscoverItems("conference." + FrmLogin.Instance.HostName, new EventHandler<IqEventArgs>(DiscoItemsResult));
         }
 
         void DiscoItemsResult(object sender, IqEventArgs e)
@@ -281,19 +256,51 @@ namespace MiniClient
 
             if (e.Presence.Type == PresenceType.Subscribe)
             {
+                //presenceManager.ApproveSubscriptionRequest(e.Presence.From);
+                var item = listContacts.Items[e.Presence.From.Bare] as RosterListViewItem;
+                if (item != null)
+                {
+                    var pm = new PresenceManager(xmppClient);
+                    pm.ApproveSubscriptionRequest(e.Presence.From);
+                }
+                else
+                {
+                    var input = new FrmAddUser(_dictContactGroups, true);
+                    input.Address = e.Presence.From;
+                    if (input.ShowDialog() == DialogResult.OK)
+                    {
+                        _dictContactGroups = input.DictContactGroups;
+                        var rm = new RosterManager(xmppClient);
+                        Jid jid = input.Address;
+                        rm.Add(jid, input.Name, input.Group);
 
+                        var pm = new PresenceManager(xmppClient);
+                        pm.ApproveSubscriptionRequest(e.Presence.From);
+                        string reason = input.Message;
+                        pm.Subscribe(jid, reason, input.Name);
+                    }
+                }
             }
             else if (e.Presence.Type == PresenceType.Subscribed)
             {
-
+                var pm = new PresenceManager(xmppClient);
+                pm.ApproveSubscriptionRequest(e.Presence.From);
             }
             else if (e.Presence.Type == PresenceType.Unsubscribe)
             {
-
+                var pm = new PresenceManager(xmppClient);
+                pm.ApproveSubscriptionRequest(e.Presence.From);
+                var rm = new RosterManager(xmppClient);
+                Jid jid = e.Presence.From;
+                rm.Remove(jid);
             }
             else if (e.Presence.Type == PresenceType.Unsubscribed)
             {
-
+                var pm = new PresenceManager(xmppClient);
+                pm.ApproveSubscriptionRequest(e.Presence.From);
+                var rm = new RosterManager(xmppClient);
+                Jid jid = e.Presence.From;
+                rm.Remove(jid);
             }
             else
             {
@@ -350,14 +357,6 @@ namespace MiniClient
                     f.MdiParent = FrmParent.Instance;
                     f.Show();
                     f.IncomingMessage(e.Message, e.Message.From.Resource, DateTime.Now);
-                    //// Flash window until it recieves focus
-                    //FLASHWINFO fInfo = new FLASHWINFO();
-                    //fInfo.hwnd = this.Handle;
-                    //fInfo.uCount = 10;  // number of times to flash
-                    //fInfo.dwTimeout = 300; //Time out between flashes
-                    //fInfo.dwFlags = FLASHW_TRAY;
-                    //fInfo.cbSize = Marshal.SizeOf(fInfo);
-                    //FlashWindowEx(ref fInfo);
                 }
             }
         }
@@ -577,21 +576,10 @@ namespace MiniClient
                 if (input.ShowDialog() == DialogResult.OK)
                 {
                     var roomJid = new Jid(input.Result);
-                    var f = new FrmGroupChat(xmppClient, roomJid, nickname);
+                    var f = new FrmGroupChat(xmppClient, roomJid, nickname, listContacts);
                     f.MdiParent = FrmParent.Instance;
                     f.Show();
                 }
-            }
-        }
-
-        private void tsmiEnterRoomTest_Click(object sender, System.EventArgs e)
-        {
-            var input = new FrmInputBox("Enter your Nickname for the chatroom", "Nickname", "Nickname");
-            if (input.ShowDialog() == DialogResult.OK)
-            {
-                string nickname = input.Result;
-                var roomJid = new Jid("test@conference.ag-software.net");
-                new FrmGroupChat(xmppClient, roomJid, nickname).Show();
             }
         }
 
@@ -730,7 +718,7 @@ namespace MiniClient
                 if (!Util.ChatForms.ContainsKey(Group.Name))
                 {
                     var roomJid = new Jid(Group.Name);
-                    var f = new FrmGroupChat(xmppClient, roomJid, UserName);
+                    var f = new FrmGroupChat(xmppClient, roomJid, UserName, listContacts);
                     f.MdiParent = FrmParent.Instance;
                     f.Show();
                 }

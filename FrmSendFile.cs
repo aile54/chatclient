@@ -9,6 +9,7 @@ namespace MiniClient
     {
         private string sid = "";
         private Jid _jid;
+        private Jid[] _arrjid;
         private FileTransferManager fm;
         public FrmSendFile(FileTransferManager ftm, Jid jid)
         {
@@ -16,6 +17,21 @@ namespace MiniClient
 
             fm = ftm;
             _jid = jid;
+
+            Text = "File transfer: " + jid;
+
+            fm.OnError += fm_OnError;
+            fm.OnEnd += fm_OnEnd;
+            fm.OnStart += fm_OnStart;
+            fm.OnProgress += fm_OnProgress;
+        }
+
+        public FrmSendFile(FileTransferManager ftm, Jid[] jid)
+        {
+            InitializeComponent();
+
+            fm = ftm;
+            _arrjid = jid;
 
             Text = "File transfer: " + jid;
 
@@ -78,7 +94,17 @@ namespace MiniClient
         
         private void cmdSend_Click(object sender, System.EventArgs e)
         {
-            sid = fm.Send(_jid, lblFileName.Text, txtDescription.Text);
+            if (_jid != null)
+            {
+                sid = fm.Send(_jid, lblFileName.Text, txtDescription.Text);
+            }
+            else
+            {
+                foreach (var item in _arrjid)
+                {
+                    sid = fm.Send(_jid, lblFileName.Text, txtDescription.Text);
+                }
+            }
             cmdSend.Enabled = cmdChooseFile.Enabled = false;
         }
     }

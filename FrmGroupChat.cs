@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Threading;
 using Encrypt_Decrypt_Tool;
+using System.Collections.Generic;
 
 namespace MiniClient
 {
@@ -23,9 +24,10 @@ namespace MiniClient
         DateTime LastDtDB = new DateTime();
         HistoryTransactionTableAdapter local_history;
         SqlCeConnection connection;
-
+        FileTransferManager fm = new FileTransferManager();
+        Dictionary<string,string> listAddress = new Dictionary<string,string>();
         #region << Constructors >>        
-        public FrmGroupChat(XmppClient xmppClient, Jid roomJid, string nickname)
+        public FrmGroupChat(XmppClient xmppClient, Jid roomJid, string nickname, ListView listContract)
         {
             InitializeComponent();
             local_history = new HistoryTransactionTableAdapter();
@@ -33,6 +35,9 @@ namespace MiniClient
             _roomJid = roomJid;
             _xmppClient = xmppClient;
             _nickname = nickname;
+            _listContract = listContract;
+            fm.XmppClient = FrmLogin.Instance.xmppClient;
+            fm.OnFile += fm_OnFile;
             Text = roomJid.User + " Group";;
             mm = new MucManager(xmppClient);
 
@@ -45,7 +50,7 @@ namespace MiniClient
             GetLastRow(_xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare, out LastDtDB);
         }
         #endregion
-
+        private readonly ListView _listContract;
         private readonly Jid                     _roomJid;
         private readonly XmppClient              _xmppClient;
         private readonly string                  _nickname;
@@ -159,7 +164,7 @@ namespace MiniClient
             }
             // check for status code 201, this means the room is not ready to use yet
             // we request an instant room and accept the and accept the default configuration by the server
-            if (mucX.HasStatus(201)) // 201 =  room is awaiting configuration.
+            if (mucX.HasStatus(201)) // 201 =  room is awaiting configuration.d
                 mm.RequestInstantRoom(_roomJid);
            
 
@@ -181,6 +186,9 @@ namespace MiniClient
                     {
                         lvi.SubItems[1].Text = u.Item.Affiliation.ToString();
                         lvi.SubItems[2].Text = u.Item.Role.ToString();
+                        //string bare = e.Presence.From.Resource + "@" + FrmLogin.Instance.HostName;
+                        //listAddress[lvi.SubItems[3].Text] = bare;
+                        //lvi.SubItems[3].Text = bare;
                     }
                 }
             }
@@ -197,6 +205,12 @@ namespace MiniClient
                 {
                     lv.SubItems.Add(u.Item.Affiliation.ToString());
                     lv.SubItems.Add(u.Item.Role.ToString());
+                    //string bare = e.Presence.From.Resource + "@" + FrmLogin.Instance.HostName;
+                    //lv.SubItems.Add(bare);
+                    //if (!listAddress.ContainsKey(bare))
+                    //{
+                    //    listAddress.Add(bare, bare);
+                    //}
                 }
                 lv.ImageIndex = imageIdx;
                 lvwRoster.Items.Add(lv);
@@ -342,6 +356,35 @@ namespace MiniClient
         {
             rtfChat.SelectionStart = rtfChat.Text.Length; //Set the current caret position at the end
             rtfChat.ScrollToCaret(); //Now scroll it automatically
+        }
+
+        private void btnSendFile_Click(object sender, EventArgs e)
+        {
+            //Jid[] jid = new Jid[listAddress.Count - 1];
+            //int j = 0;
+            //for (int i = 0; i < lvwRoster.Items.Count; i++)
+            //{
+            //    string bare = lvwRoster.Items[i].SubItems[3].Text;
+            //    if (bare != FrmLogin.Instance.UserName)
+            //    {
+            //        var item = _listContract.Items.Find(bare, true);
+            //        if (item != null)
+            //        {
+            //            jid[j] = lvwRoster.Items[i].SubItems[3].Text;
+            //            j++;
+            //        }
+            //    }
+            //}
+            //new FrmSendFile(fm, jid).Show();
+        }
+
+        void fm_OnFile(object sender, FileTransferEventArgs e)
+        {
+            var recvFile = new FrmReceiveFile(fm, e);
+            recvFile.Show();
+            recvFile.StartAccept();
+            //e.Accept = true;
+
         }
     }
 }

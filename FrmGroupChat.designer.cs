@@ -36,6 +36,7 @@ namespace MiniClient
             this.headerNickname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.headerRole = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.headerAffiliation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ilsRoster = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -46,6 +47,7 @@ namespace MiniClient
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.rtfSend = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSendFile = new System.Windows.Forms.Button();
             this.btnHistory = new System.Windows.Forms.Button();
             this.cmdSend = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -88,7 +90,8 @@ namespace MiniClient
             this.lvwRoster.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.headerNickname,
             this.headerRole,
-            this.headerAffiliation});
+            this.headerAffiliation,
+            this.columnHeader1});
             this.lvwRoster.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvwRoster.Location = new System.Drawing.Point(0, 0);
             this.lvwRoster.Name = "lvwRoster";
@@ -112,6 +115,10 @@ namespace MiniClient
             // 
             this.headerAffiliation.Text = "Affiliation";
             this.headerAffiliation.Width = 83;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Width = 0;
             // 
             // ilsRoster
             // 
@@ -231,6 +238,7 @@ namespace MiniClient
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnSendFile);
             this.panel1.Controls.Add(this.btnHistory);
             this.panel1.Controls.Add(this.cmdSend);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -238,6 +246,18 @@ namespace MiniClient
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(477, 24);
             this.panel1.TabIndex = 1;
+            // 
+            // btnSendFile
+            // 
+            this.btnSendFile.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnSendFile.Location = new System.Drawing.Point(3, 0);
+            this.btnSendFile.Name = "btnSendFile";
+            this.btnSendFile.Size = new System.Drawing.Size(80, 24);
+            this.btnSendFile.TabIndex = 8;
+            this.btnSendFile.Text = "&Send File";
+            this.btnSendFile.UseVisualStyleBackColor = true;
+            this.btnSendFile.Visible = false;
+            this.btnSendFile.Click += new System.EventHandler(this.btnSendFile_Click);
             // 
             // btnHistory
             // 
@@ -309,6 +329,8 @@ namespace MiniClient
         private System.Windows.Forms.ColumnHeader headerAffiliation;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnHistory;
+        private System.Windows.Forms.Button btnSendFile;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
 
     }
 }
