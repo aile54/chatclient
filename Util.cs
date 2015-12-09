@@ -5,6 +5,9 @@ using System.Text;
 using Matrix.Xml;
 using Matrix.Xmpp;
 using Matrix.Xmpp.Client;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System.Windows;
 
 namespace MiniClient
 {
@@ -124,4 +127,32 @@ namespace MiniClient
         }
 
     }
+}
+
+public static class FlashWindow
+{
+    public const int FLASHW_STOP = 0;
+    public const int FLASHW_CAPTION = 0x00000001;
+    public const int FLASHW_TRAY = 0x00000002;
+    public const int FLASHW_ALL = (FLASHW_CAPTION | FLASHW_TRAY);
+    public const int FLASHW_TIMER = 0x00000004;
+    public const int FLASHW_TIMERNOFG = 0x0000000C;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct FLASHWINFO
+    {
+        [MarshalAs(UnmanagedType.U4)]
+        public int cbSize;
+        public IntPtr hwnd;
+        [MarshalAs(UnmanagedType.U4)]
+        public int dwFlags;
+        [MarshalAs(UnmanagedType.U4)]
+        public int uCount;
+        [MarshalAs(UnmanagedType.U4)]
+        public int dwTimeout;
+    }
+
+    [DllImport("user32.dll")]
+    public static extern bool FlashWindowEx([MarshalAs(UnmanagedType.Struct)]
+                  ref FLASHWINFO pfwi);
 }

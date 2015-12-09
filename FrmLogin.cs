@@ -22,6 +22,7 @@ namespace MiniClient
         public string UserName { get { return txtUsername.Text; } }
         public string Password { get { return txtPassword.Text; } }
         public string XmppServer { get { return txtXmppServer.Text; } }
+        public string HostName { get { return (new Matrix.Jid(txtUsername.Text)).Server; } }
         private const int CP_NOCLOSE_BUTTON = 0x200;
         protected override CreateParams CreateParams
         {
@@ -48,13 +49,14 @@ namespace MiniClient
         }
 
         private void btnSignIn_Click(object sender, EventArgs e)
-        {    
+        {
+            Matrix.Jid Jd = new Matrix.Jid(txtUsername.Text);
             // set settings
-            _login.User = txtUsername.Text;
+            _login.User = Jd.User;
             _login.Server = txtXmppServer.Text;
             _login.Password = txtPassword.Text;
 
-            xmppClient.SetUsername(FrmLogin.Instance.UserName);
+            xmppClient.SetUsername(Jd.User);
             xmppClient.SetXmppDomain(FrmLogin.Instance.XmppServer);
             xmppClient.Password = FrmLogin.Instance.Password;
 

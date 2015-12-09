@@ -38,6 +38,8 @@
             this.listContacts = new System.Windows.Forms.ListView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.listGroup = new System.Windows.Forms.ListView();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.listBookmarkedRooms = new System.Windows.Forms.ListView();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.listEvents = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -72,6 +74,7 @@
             this.tabGroup.SuspendLayout();
             this.tabContacts.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.ctxMenuRoster.SuspendLayout();
@@ -95,6 +98,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabGroup.Controls.Add(this.tabContacts);
             this.tabGroup.Controls.Add(this.tabPage3);
+            this.tabGroup.Controls.Add(this.tabPage4);
             this.tabGroup.Controls.Add(this.tabPage1);
             this.tabGroup.Controls.Add(this.tabPage2);
             this.tabGroup.Location = new System.Drawing.Point(10, 56);
@@ -149,6 +153,30 @@
             this.listGroup.UseCompatibleStateImageBehavior = false;
             this.listGroup.View = System.Windows.Forms.View.List;
             this.listGroup.DoubleClick += new System.EventHandler(this.listGroup_DoubleClick);
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.listBookmarkedRooms);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(655, 395);
+            this.tabPage4.TabIndex = 4;
+            this.tabPage4.Text = "Bookmarked rooms";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // listBookmarkedRooms
+            // 
+            this.listBookmarkedRooms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBookmarkedRooms.FullRowSelect = true;
+            this.listBookmarkedRooms.GridLines = true;
+            this.listBookmarkedRooms.Location = new System.Drawing.Point(3, 3);
+            this.listBookmarkedRooms.Name = "listBookmarkedRooms";
+            this.listBookmarkedRooms.Size = new System.Drawing.Size(649, 389);
+            this.listBookmarkedRooms.TabIndex = 0;
+            this.listBookmarkedRooms.UseCompatibleStateImageBehavior = false;
+            this.listBookmarkedRooms.View = System.Windows.Forms.View.List;
+            this.listBookmarkedRooms.DoubleClick += new System.EventHandler(this.listGroup_DoubleClick);
             // 
             // tabPage1
             // 
@@ -449,6 +477,7 @@
             this.tabGroup.ResumeLayout(false);
             this.tabContacts.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.ctxMenuRoster.ResumeLayout(false);
@@ -497,6 +526,8 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.ListView listGroup;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.ListView listBookmarkedRooms;
     }
 }
 

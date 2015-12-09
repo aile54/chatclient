@@ -217,6 +217,15 @@ namespace MiniClient
                 rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
                 rtfChat.AppendText("\r\n");
             }
+            else if (dtTemp.Date.CompareTo(date.Date) < 0)
+            {
+                dtTemp = date;
+                rtfChat.SelectionColor = Color.Black;
+                rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
+                rtfChat.AppendText("\r\n");
+            }
 
             rtfChat.SelectionAlignment = HorizontalAlignment.Left;
             rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);

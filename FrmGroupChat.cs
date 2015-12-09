@@ -145,7 +145,18 @@ namespace MiniClient
         {
 
             var mucX = e.Presence.MucUser;
-            
+            if (mucX == null)
+            {
+                if (e.Presence.Error.Type == Matrix.Xmpp.Base.ErrorType.Auth)
+                {
+                    if (e.Presence.Error.FirstAttribute.Value == "407")
+                    {
+                        MessageBox.Show("Unauthorized!");
+                        this.Close();
+                        return;
+                    }
+                }
+            }
             // check for status code 201, this means the room is not ready to use yet
             // we request an instant room and accept the and accept the default configuration by the server
             if (mucX.HasStatus(201)) // 201 =  room is awaiting configuration.

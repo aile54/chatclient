@@ -15,10 +15,10 @@ using Matrix.Xmpp.Client;
 using Matrix.Xmpp.Register;
 using Matrix.Xmpp.XData;
 using MiniClient.Settings;
-using Presence=Matrix.Xmpp.Client.Presence;
-using RosterItem=Matrix.Xmpp.Roster.RosterItem;
-using Subscription=Matrix.Xmpp.Roster.Subscription;
-using EventArgs=Matrix.EventArgs;
+using Presence = Matrix.Xmpp.Client.Presence;
+using RosterItem = Matrix.Xmpp.Roster.RosterItem;
+using Subscription = Matrix.Xmpp.Roster.Subscription;
+using EventArgs = Matrix.EventArgs;
 using MiniClient.ClientDatabaseTableAdapters;
 using System.Data.SqlServerCe;
 using System.Data;
@@ -26,18 +26,43 @@ using Matrix.Xmpp.Vcard;
 
 namespace MiniClient
 {
-     
+
     public partial class FrmMain : Form
     {
         //WinAPI-Declaration for SendMessage
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr window, int message, int wparam, int lparam);
 
+        public const int FLASHW_STOP = 0;
+        public const int FLASHW_CAPTION = 0x00000001;
+        public const int FLASHW_TRAY = 0x00000002;
+        public const int FLASHW_ALL = (FLASHW_CAPTION | FLASHW_TRAY);
+        public const int FLASHW_TIMER = 0x00000004;
+        public const int FLASHW_TIMERNOFG = 0x0000000C;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO
+        {
+            [MarshalAs(UnmanagedType.U4)]
+            public int cbSize;
+            public IntPtr hwnd;
+            [MarshalAs(UnmanagedType.U4)]
+            public int dwFlags;
+            [MarshalAs(UnmanagedType.U4)]
+            public int uCount;
+            [MarshalAs(UnmanagedType.U4)]
+            public int dwTimeout;
+        }
+
+        [DllImport("user32.dll")]
+        public static extern bool FlashWindowEx([MarshalAs(UnmanagedType.Struct)]
+                  ref FLASHWINFO pfwi);
+
         const int WM_VSCROLL = 0x115;
         const int SB_BOTTOM = 7;
 
-        public Dictionary<string, ListViewGroup>  _dictContactGroups = new Dictionary<string, ListViewGroup>();
-        private readonly Dictionary<Jid, RosterItem>        _dictContats = new Dictionary<Jid, RosterItem>();
+        public Dictionary<string, ListViewGroup> _dictContactGroups = new Dictionary<string, ListViewGroup>();
+        private readonly Dictionary<Jid, RosterItem> _dictContats = new Dictionary<Jid, RosterItem>();
 
         FileTransferManager fm = new FileTransferManager();
         XmppClient xmppClient;
@@ -69,25 +94,25 @@ namespace MiniClient
             groupChatToolStripMenuItem.Enabled = true;
             settingToolStripMenuItem.Enabled = true;
 
-            this.xmppClient.OnError+=new EventHandler<ExceptionEventArgs>(xmppClient_OnError);
-            this.xmppClient.OnMessage+=new EventHandler<MessageEventArgs>(xmppClient_OnMessage);
+            this.xmppClient.OnError += new EventHandler<ExceptionEventArgs>(xmppClient_OnError);
+            this.xmppClient.OnMessage += new EventHandler<MessageEventArgs>(xmppClient_OnMessage);
             this.xmppClient.OnPrebind += new EventHandler<Matrix.Net.PrebindEventArgs>(xmppClient_OnPrebind);
-            
-            this.xmppClient.OnBind+=new EventHandler<JidEventArgs>(xmppClient_OnBind);
-            this.xmppClient.OnClose+=new EventHandler<EventArgs>(xmppClient_OnClose);
-            this.xmppClient.OnRosterEnd+=new EventHandler<EventArgs>(xmppClient_OnRosterEnd);
-            this.xmppClient.OnRosterStart+=new EventHandler<EventArgs>(xmppClient_OnRosterStart);
-            this.xmppClient.OnRosterItem+=new EventHandler<Matrix.Xmpp.Roster.RosterEventArgs>(xmppClient_OnRosterItem);
-            this.xmppClient.OnPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnPresence);
-            this.xmppClient.OnValidateCertificate+=new EventHandler<CertificateEventArgs>(xmppClient_OnValidateCertificate);
-            this.xmppClient.OnIq+=new EventHandler<IqEventArgs>(xmppClient_OnIq);
-            this.xmppClient.OnReceiveXml+=new EventHandler<TextEventArgs>(xmppClient_OnReceiveXml);
-            this.xmppClient.OnStreamError+=new EventHandler<StreamErrorEventArgs>(xmppClient_OnStreamError);
-            this.xmppClient.OnSendXml+=new EventHandler<TextEventArgs>(xmppClient_OnSendXml);
-            this.xmppClient.OnRegister+=new EventHandler<EventArgs>(xmppClient_OnRegister);
-            this.xmppClient.OnRegisterError+=new EventHandler<IqEventArgs>(xmppClient_OnRegisterError);
-            this.xmppClient.OnRegisterInformation+=new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
-            this.xmppClient.OnBeforeSendPresence+=new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
+
+            this.xmppClient.OnBind += new EventHandler<JidEventArgs>(xmppClient_OnBind);
+            this.xmppClient.OnClose += new EventHandler<EventArgs>(xmppClient_OnClose);
+            this.xmppClient.OnRosterEnd += new EventHandler<EventArgs>(xmppClient_OnRosterEnd);
+            this.xmppClient.OnRosterStart += new EventHandler<EventArgs>(xmppClient_OnRosterStart);
+            this.xmppClient.OnRosterItem += new EventHandler<Matrix.Xmpp.Roster.RosterEventArgs>(xmppClient_OnRosterItem);
+            this.xmppClient.OnPresence += new EventHandler<PresenceEventArgs>(xmppClient_OnPresence);
+            this.xmppClient.OnValidateCertificate += new EventHandler<CertificateEventArgs>(xmppClient_OnValidateCertificate);
+            this.xmppClient.OnIq += new EventHandler<IqEventArgs>(xmppClient_OnIq);
+            this.xmppClient.OnReceiveXml += new EventHandler<TextEventArgs>(xmppClient_OnReceiveXml);
+            this.xmppClient.OnStreamError += new EventHandler<StreamErrorEventArgs>(xmppClient_OnStreamError);
+            this.xmppClient.OnSendXml += new EventHandler<TextEventArgs>(xmppClient_OnSendXml);
+            this.xmppClient.OnRegister += new EventHandler<EventArgs>(xmppClient_OnRegister);
+            this.xmppClient.OnRegisterError += new EventHandler<IqEventArgs>(xmppClient_OnRegisterError);
+            this.xmppClient.OnRegisterInformation += new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
+            this.xmppClient.OnBeforeSendPresence += new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
             this.Load += new EventHandler(FrmMain_Load);
         }
 
@@ -113,6 +138,38 @@ namespace MiniClient
                 {
                     Jid room = new Jid(item[0].ToString());
                     var newItem = new RosterListViewItem(room.User ?? room.Bare, 0, null) { Name = room.Bare };
+                    listBookmarkedRooms.Items.Add(newItem);
+                }
+            }
+
+
+            DiscoManager _dm = new DiscoManager(xmppClient);
+            _dm.DiscoverItems("conference.vitenet1.net", new EventHandler<IqEventArgs>(DiscoItemsResult));
+        }
+
+        void DiscoItemsResult(object sender, IqEventArgs e)
+        {
+            //<iq from="vm-debian" to="alex@vm-debian/MatriX" id="MX_4" type="result" xmlns="jabber:client">
+            //  <query xmlns="http://jabber.org/protocol/disco#items">
+            //      <item jid="conference.vm-debian" />
+            //      <item jid="irc.vm-debian" />
+            //      <item jid="pubsub.vm-debian" />
+            //      <item jid="vjud.vm-debian" />
+            //  </query>
+            //</iq>
+
+            var query = e.Iq.Element<Matrix.Xmpp.Disco.Items>();
+            if (query != null)
+            {
+                foreach (var itm in query.GetItems())
+                {
+                    // some servers have problems ifwe flood them weith too many packets here
+                    // the sleep is a hack to avpid this problems.
+                    //System.Threading.Thread.Sleep(200);
+                    //_dm.DiscoverInformation(itm.Jid, itm.Node);
+                    //_dm.DiscoverInformation(itm.Jid, itm.Node, new EventHandler<IqEventArgs>(DiscoInfoResult));
+
+                    var newItem = new RosterListViewItem(itm.Jid.User ?? itm.Jid.Bare, 0, null) { Name = itm.Jid.Bare };
                     listGroup.Items.Add(newItem);
                 }
             }
@@ -120,13 +177,13 @@ namespace MiniClient
 
         void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
         {
-            
+
         }
-       
+
         private static void RegisterCustomElements()
         {
-            Factory.RegisterElement<Settings.Settings>  ("ag-software:settings", "Settings");
-            Factory.RegisterElement<Login>              ("ag-software:settings", "Login");
+            Factory.RegisterElement<Settings.Settings>("ag-software:settings", "Settings");
+            Factory.RegisterElement<Login>("ag-software:settings", "Login");
         }
 
         private void xmppClient_OnError(object sender, ExceptionEventArgs e)
@@ -163,11 +220,11 @@ namespace MiniClient
 
         private void xmppClient_OnRosterItem(object sender, Matrix.Xmpp.Roster.RosterEventArgs e)
         {
-            DisplayEvent(string.Format( "OnRosterItem\t{0}\t{1}", e.RosterItem.Jid, e.RosterItem.Name ));
+            DisplayEvent(string.Format("OnRosterItem\t{0}\t{1}", e.RosterItem.Jid, e.RosterItem.Name));
 
             if (e.RosterItem.Ask == Matrix.Xmpp.Roster.Ask.Unsubscribe)
             {
-                
+
             }
             else if (e.RosterItem.Subscription != Subscription.Remove)
             {
@@ -179,7 +236,7 @@ namespace MiniClient
                 if (e.RosterItem.HasGroups)
                     groupname = e.RosterItem.GetGroups()[0];
 
-                
+
                 if (!_dictContactGroups.ContainsKey(groupname))
                 {
                     var newGroup = new ListViewGroup(groupname);
@@ -224,7 +281,7 @@ namespace MiniClient
 
             if (e.Presence.Type == PresenceType.Subscribe)
             {
-                
+
             }
             else if (e.Presence.Type == PresenceType.Subscribed)
             {
@@ -288,34 +345,47 @@ namespace MiniClient
                     var item = listContacts.Items[e.Message.From.Bare];
                     if (item != null)
                         nick = item.Text;
-                    
+
                     var f = new FrmChat(e.Message.From, xmppClient, nick);
+                    f.MdiParent = FrmParent.Instance;
                     f.Show();
                     f.IncomingMessage(e.Message, e.Message.From.Resource, DateTime.Now);
+                    //// Flash window until it recieves focus
+                    //FLASHWINFO fInfo = new FLASHWINFO();
+                    //fInfo.hwnd = this.Handle;
+                    //fInfo.uCount = 10;  // number of times to flash
+                    //fInfo.dwTimeout = 300; //Time out between flashes
+                    //fInfo.dwFlags = FLASHW_TRAY;
+                    //fInfo.cbSize = Marshal.SizeOf(fInfo);
+                    //FlashWindowEx(ref fInfo);
                 }
             }
         }
 
         private void xmppClient_OnValidateCertificate(object sender, CertificateEventArgs e)
         {
-             //always accept cert
-             e.AcceptCertificate = true;
+            //always accept cert
+            e.AcceptCertificate = true;
 
             // or let the user validate the certificate
             //ValidateCertificate(e);
         }
-        
+
         private void cmdDisconnect_Click(object sender, System.EventArgs e)
         {
             xmppClient.Close();
 
-            this.Hide();
-            for (int ix = Application.OpenForms.Count - 1; ix > 0; --ix)
+            this.Close();
+            for (int ix = Application.OpenForms.Count - 1; ix >= 0; --ix)
             {
                 var frm = Application.OpenForms[ix];
-                if (frm.GetType() != typeof(FrmMain)) frm.Close();
+                if (frm.GetType() != typeof(FrmMain) 
+                    && frm.GetType() != typeof(FrmLogin)
+                    && frm.GetType() != typeof(FrmParent)) frm.Close();
             }
 
+            FrmLogin.FrmMain = new FrmMain();
+            FrmLogin.FrmMain.MdiParent = FrmParent.Instance;
             FrmLogin.Instance.Show();
         }
 
@@ -330,10 +400,10 @@ namespace MiniClient
             ////    {
             ////        IncomingMessage(e.Message);
             ////    }
-                
+
             ////}
             //var x = XDocument.Parse(e.Text);
-            
+
             //rtfDebug.SelectionStart = rtfDebug.Text.Length;
             //rtfDebug.SelectionLength = 0;
             //rtfDebug.SelectionColor = Color.Red;
@@ -343,7 +413,7 @@ namespace MiniClient
             //rtfDebug.AppendText("\r\n");
             //ScrollRtfToEnd(rtfDebug);
         }
-        
+
         private void xmppClient_OnSendXml(object sender, TextEventArgs e)
         {
             //rtfDebug.SelectionStart = rtfDebug.Text.Length;
@@ -360,7 +430,7 @@ namespace MiniClient
         {
             SendMessage(rtf.Handle, WM_VSCROLL, SB_BOTTOM, 0);
         }
-        
+
         /// <summary>
         /// Inits the contact list.
         /// </summary>
@@ -456,7 +526,7 @@ namespace MiniClient
         private void xmppClient_OnRegisterInformation(object sender, RegisterEventArgs e)
         {
             e.Register.RemoveAll<Data>();
-            
+
             e.Register.Username = xmppClient.Username;
             e.Register.Password = xmppClient.Password;
         }
@@ -476,14 +546,14 @@ namespace MiniClient
             presenceManager.ApproveSubscriptionRequest(e.Presence.From);
             //presenceManager.DenySubscriptionRequest(e.Presence.From);
         }
-        
+
         void fm_OnFile(object sender, FileTransferEventArgs e)
         {
             var recvFile = new FrmReceiveFile(fm, e);
             recvFile.Show();
             recvFile.StartAccept();
             //e.Accept = true;
-            
+
         }
 
         private void xmppClient_OnBeforeSendPresence(object sender, PresenceEventArgs e)
@@ -496,7 +566,7 @@ namespace MiniClient
         {
             new FrmVCard(xmppClient, null, true).Show();
         }
-        
+
         private void tsmiEnterRoom_Click(object sender, System.EventArgs e)
         {
             var input = new FrmInputBox("Enter your Nickname for the chatroom", "Nickname", "Nickname");
@@ -531,7 +601,7 @@ namespace MiniClient
             if (xmppClient.StreamActive)
                 xmppClient.SendPresence(Matrix.Xmpp.Show.None);
         }
-        
+
         private void presenceChatToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             if (xmppClient.StreamActive)
@@ -583,8 +653,6 @@ namespace MiniClient
                 string reason = input.Message;
                 pm.Subscribe(jid, reason, input.Name);
             }
-
-            
         }
 
         private void deleteToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -596,7 +664,7 @@ namespace MiniClient
                 Jid jid = item.Name;
                 rm.Remove(jid);
             }
-            
+
         }
 
         private void editToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -639,6 +707,10 @@ namespace MiniClient
             {
                 GetMyVcard(listGroup.SelectedItems[0]);
             }
+            else if (listBookmarkedRooms.SelectedItems.Count > 0)
+            {
+                GetMyVcard(listBookmarkedRooms.SelectedItems[0]);
+            }
         }
 
         private void GetMyVcard(ListViewItem group)
@@ -664,5 +736,6 @@ namespace MiniClient
                 }
             }
         }
+
     }
 }
