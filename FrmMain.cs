@@ -29,6 +29,7 @@ namespace MiniClient
 
     public partial class FrmMain : Form
     {
+        #region Variable
         //WinAPI-Declaration for SendMessage
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr window, int message, int wparam, int lparam);
@@ -53,10 +54,12 @@ namespace MiniClient
         }
 
         public static string UserName = string.Empty;
+        ListViewItem Group = new ListViewItem();
+        #endregion
+
         public FrmMain()
         {
             InitializeComponent();
-
             RegisterCustomElements();
             //frmParent.Show();
             InitContactList();
@@ -89,13 +92,16 @@ namespace MiniClient
             this.xmppClient.OnRegisterInformation += new EventHandler<RegisterEventArgs>(xmppClient_OnRegisterInformation);
             this.xmppClient.OnBeforeSendPresence += new EventHandler<PresenceEventArgs>(xmppClient_OnBeforeSendPresence);
             this.Load += new EventHandler(FrmMain_Load);
+
+            this.tabPage4.Visible = false;
         }
 
+        #region Events
         void FrmMain_Load(object sender, System.EventArgs e)
         {
             InitGroupList();
         }
-
+        
         private void InitGroupList()
         {
             DataTable dt = new DataTable();
@@ -116,13 +122,31 @@ namespace MiniClient
                     listBookmarkedRooms.Items.Add(newItem);
                 }
             }
-
-
+            
             DiscoManager _dm = new DiscoManager(xmppClient);
             _dm.DiscoverItems("conference." + FrmLogin.Instance.HostName, new EventHandler<IqEventArgs>(DiscoItemsResult));
         }
+        
+        /// <summary>
+        /// Inits the contact list.
+        /// </summary>
+        private void InitContactList()
+        {
+            listContacts.Clear();
 
-        void DiscoItemsResult(object sender, IqEventArgs e)
+            listContacts.Columns.Add("Name", 100, HorizontalAlignment.Left);
+            listContacts.Columns.Add("Status", 75, HorizontalAlignment.Left);
+            listContacts.Columns.Add("Resource", 75, HorizontalAlignment.Left);
+
+            listContacts.LargeImageList = ilstStatus;
+        }
+
+        /// <summary>
+        /// Discovering chat rooms
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="Matrix.Xmpp.Client.IqEventArgs"/> instance containing the event data.</param>
+        private void DiscoItemsResult(object sender, IqEventArgs e)
         {
             //<iq from="vm-debian" to="alex@vm-debian/MatriX" id="MX_4" type="result" xmlns="jabber:client">
             //  <query xmlns="http://jabber.org/protocol/disco#items">
@@ -150,7 +174,182 @@ namespace MiniClient
             }
         }
 
-        void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
+        private void cmdPubSub_Click(object sender, System.EventArgs e)
+        {
+            var frm = new FrmPubSub(xmppClient);
+            frm.Show();
+        }
+
+        private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            xmppClient.Close();
+            this.Hide();
+            for (int ix = Application.OpenForms.Count - 1; ix > 0; --ix)
+            {
+                var frm = Application.OpenForms[ix];
+                if (frm.GetType() != typeof(FrmMain)) frm.Close();
+            }
+
+            FrmLogin.Instance.Show();
+        }
+
+        private void chatToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                if (!Util.ChatForms.ContainsKey(item.Name))
+                {
+                    var roomJid = new Jid(item.Name);
+                    var f = new FrmChat(roomJid, xmppClient, item.Text);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
+                }
+            }
+        }
+
+        private void vCardToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                new FrmVCard(xmppClient, listContacts.SelectedItems[0].Name, false).Show();
+            }
+        }
+
+        private void listContacts_MouseUp(object sender, MouseEventArgs e)
+        {
+            //Check if right clicked on a ListView Item
+            if ((listContacts.SelectedItems.Count != 0) && (e.Button == MouseButtons.Right))
+            {
+                // dynamically adjust context menu with resources.
+                sendFileToolStripMenuItem.DropDownItems.Clear();
+                var item = listContacts.SelectedItems[0] as RosterListViewItem;
+                foreach (string res in item.Resources)
+                {
+                    Jid jid = item.Name + "/" + res;
+                    var menu = new ToolStripMenuItem(res);
+                    menu.Click += delegate
+                    {
+                        new FrmSendFile(fm, jid).Show();
+
+                    };
+                    sendFileToolStripMenuItem.DropDownItems.Add(menu);
+                }
+                // show context menu
+                ctxMenuRoster.Show(Cursor.Position);
+            }
+        }
+
+        private void cmdVcard_Click(object sender, System.EventArgs e)
+        {
+            new FrmVCard(xmppClient, null, true).Show();
+        }
+
+        private void tsmiEnterRoom_Click(object sender, System.EventArgs e)
+        {
+            var input = new FrmInputBox("Enter your Nickname for the chatroom", "Nickname", "Nickname");
+            if (input.ShowDialog() == DialogResult.OK)
+            {
+                string nickname = input.Result;
+                input = new FrmInputBox("Enter the Jid of the room to join (e.g. jdev@conference.jabber.org)", "Room");
+                if (input.ShowDialog() == DialogResult.OK)
+                {
+                    var roomJid = new Jid(input.Result);
+                    var f = new FrmGroupChat(xmppClient, roomJid, nickname, listContacts);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
+                }
+            }
+        }
+
+        private void resetDatabaseToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            string query = "DELETE FROM HistoryTransaction";
+            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
+            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = query;
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        private void addToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            var input = new FrmAddUser(_dictContactGroups, true, xmppClient);
+            if (input.ShowDialog() == DialogResult.OK)
+            {
+                _dictContactGroups = input.DictContactGroups;
+                var rm = new RosterManager(xmppClient);
+                Jid jid = input.Address;
+                rm.Add(jid, input.Name, input.Group);
+
+                var pm = new PresenceManager(xmppClient);
+                string reason = input.Message;
+                pm.Subscribe(jid, reason, input.Name);
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                var rm = new RosterManager(xmppClient);
+                Jid jid = item.Name;
+                rm.Remove(jid);
+            }
+
+        }
+
+        private void editToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                var input = new FrmAddUser(_dictContactGroups, false, xmppClient);
+                input.Name = item.Text;
+                input.Address = item.Name;
+                input.Group = item.Group.Header;
+                if (input.ShowDialog() == DialogResult.OK)
+                {
+                    var rm = new RosterManager(xmppClient);
+                    Jid jid = input.Address;
+                    rm.Update(jid, input.Name, input.Group);
+                }
+            }
+        }
+
+        private void listContacts_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (listContacts.SelectedItems.Count > 0)
+            {
+                var item = listContacts.SelectedItems[0];
+                if (!Util.ChatForms.ContainsKey(item.Name))
+                {
+                    var roomJid = new Jid(item.Name);
+                    FrmChat f = new FrmChat(roomJid, xmppClient, item.Text);
+                    f.MdiParent = FrmParent.Instance;
+                    f.Show();
+                }
+            }
+        }
+
+        private void listGroup_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (listGroup.SelectedItems.Count > 0)
+            {
+                GetMyVcard(listGroup.SelectedItems[0]);
+            }
+            else if (listBookmarkedRooms.SelectedItems.Count > 0)
+            {
+                GetMyVcard(listBookmarkedRooms.SelectedItems[0]);
+            }
+        }
+        #endregion
+
+        #region xmpp events
+        private void xmppClient_OnPrebind(object sender, Matrix.Net.PrebindEventArgs e)
         {
 
         }
@@ -265,7 +464,7 @@ namespace MiniClient
                 }
                 else
                 {
-                    var input = new FrmAddUser(_dictContactGroups, true);
+                    var input = new FrmAddUser(_dictContactGroups, true, xmppClient);
                     input.Address = e.Presence.From;
                     if (input.ShowDialog() == DialogResult.OK)
                     {
@@ -430,29 +629,9 @@ namespace MiniClient
             SendMessage(rtf.Handle, WM_VSCROLL, SB_BOTTOM, 0);
         }
 
-        /// <summary>
-        /// Inits the contact list.
-        /// </summary>
-        private void InitContactList()
-        {
-            listContacts.Clear();
-
-            listContacts.Columns.Add("Name", 100, HorizontalAlignment.Left);
-            listContacts.Columns.Add("Status", 75, HorizontalAlignment.Left);
-            listContacts.Columns.Add("Resource", 75, HorizontalAlignment.Left);
-
-            listContacts.LargeImageList = ilstStatus;
-        }
-
         private void xmppClient_OnStreamError(object sender, StreamErrorEventArgs e)
         {
             DisplayEvent("OnStreamError");
-        }
-
-        private void cmdPubSub_Click(object sender, System.EventArgs e)
-        {
-            var frm = new FrmPubSub(xmppClient);
-            frm.Show();
         }
 
         #region << PubSub Event >>
@@ -461,66 +640,6 @@ namespace MiniClient
             DisplayEvent("OnPubsubEvent");
         }
         #endregion
-
-        private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            xmppClient.Close();
-            this.Hide();
-            for (int ix = Application.OpenForms.Count - 1; ix > 0; --ix)
-            {
-                var frm = Application.OpenForms[ix];
-                if (frm.GetType() != typeof(FrmMain)) frm.Close();
-            }
-
-            FrmLogin.Instance.Show();
-        }
-
-        private void chatToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            if (listContacts.SelectedItems.Count > 0)
-            {
-                var item = listContacts.SelectedItems[0];
-                if (!Util.ChatForms.ContainsKey(item.Name))
-                {
-                    var roomJid = new Jid(item.Name);
-                    var f = new FrmChat(roomJid, xmppClient, item.Text);
-                    f.MdiParent = FrmParent.Instance;
-                    f.Show();
-                }
-            }
-        }
-
-        private void vCardToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            if (listContacts.SelectedItems.Count > 0)
-            {
-                new FrmVCard(xmppClient, listContacts.SelectedItems[0].Name, false).Show();
-            }
-        }
-
-        private void listContacts_MouseUp(object sender, MouseEventArgs e)
-        {
-            //Check if right clicked on a ListView Item
-            if ((listContacts.SelectedItems.Count != 0) && (e.Button == MouseButtons.Right))
-            {
-                // dynamically adjust context menu with resources.
-                sendFileToolStripMenuItem.DropDownItems.Clear();
-                var item = listContacts.SelectedItems[0] as RosterListViewItem;
-                foreach (string res in item.Resources)
-                {
-                    Jid jid = item.Name + "/" + res;
-                    var menu = new ToolStripMenuItem(res);
-                    menu.Click += delegate
-                                      {
-                                          new FrmSendFile(fm, jid).Show();
-
-                                      };
-                    sendFileToolStripMenuItem.DropDownItems.Add(menu);
-                }
-                // show context menu
-                ctxMenuRoster.Show(Cursor.Position);
-            }
-        }
 
         private void xmppClient_OnRegisterInformation(object sender, RegisterEventArgs e)
         {
@@ -561,28 +680,6 @@ namespace MiniClient
             //e.Presence.Add(new XElement("foo"));
         }
 
-        private void cmdVcard_Click(object sender, System.EventArgs e)
-        {
-            new FrmVCard(xmppClient, null, true).Show();
-        }
-
-        private void tsmiEnterRoom_Click(object sender, System.EventArgs e)
-        {
-            var input = new FrmInputBox("Enter your Nickname for the chatroom", "Nickname", "Nickname");
-            if (input.ShowDialog() == DialogResult.OK)
-            {
-                string nickname = input.Result;
-                input = new FrmInputBox("Enter the Jid of the room to join (e.g. jdev@conference.jabber.org)", "Room");
-                if (input.ShowDialog() == DialogResult.OK)
-                {
-                    var roomJid = new Jid(input.Result);
-                    var f = new FrmGroupChat(xmppClient, roomJid, nickname, listContacts);
-                    f.MdiParent = FrmParent.Instance;
-                    f.Show();
-                }
-            }
-        }
-
         #region << Change Presence >>
         private void presenceOnlineToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
@@ -615,92 +712,6 @@ namespace MiniClient
         }
         #endregion
 
-        private void resetDatabaseToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            string query = "DELETE FROM HistoryTransaction";
-            HistoryTransactionTableAdapter local_history = new HistoryTransactionTableAdapter();
-            SqlCeConnection connection = new SqlCeConnection(local_history.Connection.ConnectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = query;
-            command.ExecuteNonQuery();
-            connection.Close();
-        }
-
-        private void addToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            var input = new FrmAddUser(_dictContactGroups, true);
-            if (input.ShowDialog() == DialogResult.OK)
-            {
-                _dictContactGroups = input.DictContactGroups;
-                var rm = new RosterManager(xmppClient);
-                Jid jid = input.Address;
-                rm.Add(jid, input.Name, input.Group);
-
-                var pm = new PresenceManager(xmppClient);
-                string reason = input.Message;
-                pm.Subscribe(jid, reason, input.Name);
-            }
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            if (listContacts.SelectedItems.Count > 0)
-            {
-                var item = listContacts.SelectedItems[0];
-                var rm = new RosterManager(xmppClient);
-                Jid jid = item.Name;
-                rm.Remove(jid);
-            }
-
-        }
-
-        private void editToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            if (listContacts.SelectedItems.Count > 0)
-            {
-                var item = listContacts.SelectedItems[0];
-                var input = new FrmAddUser(_dictContactGroups, false);
-                input.Name = item.Text;
-                input.Address = item.Name;
-                input.Group = item.Group.Header;
-                if (input.ShowDialog() == DialogResult.OK)
-                {
-                    var rm = new RosterManager(xmppClient);
-                    Jid jid = input.Address;
-                    rm.Update(jid, input.Name, input.Group);
-                }
-            }
-        }
-
-        private void listContacts_DoubleClick(object sender, System.EventArgs e)
-        {
-            if (listContacts.SelectedItems.Count > 0)
-            {
-                var item = listContacts.SelectedItems[0];
-                if (!Util.ChatForms.ContainsKey(item.Name))
-                {
-                    var roomJid = new Jid(item.Name);
-                    FrmChat f = new FrmChat(roomJid, xmppClient, item.Text);
-                    f.MdiParent = FrmParent.Instance;
-                    f.Show();
-                }
-            }
-        }
-
-        ListViewItem Group = new ListViewItem();
-        private void listGroup_DoubleClick(object sender, System.EventArgs e)
-        {
-            if (listGroup.SelectedItems.Count > 0)
-            {
-                GetMyVcard(listGroup.SelectedItems[0]);
-            }
-            else if (listBookmarkedRooms.SelectedItems.Count > 0)
-            {
-                GetMyVcard(listBookmarkedRooms.SelectedItems[0]);
-            }
-        }
-
         private void GetMyVcard(ListViewItem group)
         {
             Group = group;
@@ -724,5 +735,7 @@ namespace MiniClient
                 }
             }
         }
+
+        #endregion
     }
 }
