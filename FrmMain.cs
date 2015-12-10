@@ -276,8 +276,8 @@ namespace MiniClient
 
                         var pm = new PresenceManager(xmppClient);
                         pm.ApproveSubscriptionRequest(e.Presence.From);
-                        string reason = input.Message;
-                        pm.Subscribe(jid, reason, input.Name);
+                        //string reason = input.Message;
+                        //pm.Subscribe(jid, reason, input.Name);
                     }
                 }
             }
@@ -724,6 +724,5 @@ namespace MiniClient
                 }
             }
         }
-
     }
 }

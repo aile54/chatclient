@@ -87,9 +87,9 @@
             // 
             this.labelControl3.Location = new System.Drawing.Point(19, 88);
             this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(61, 13);
+            this.labelControl3.Size = new System.Drawing.Size(32, 13);
             this.labelControl3.TabIndex = 6;
-            this.labelControl3.Text = "Xmpp Server";
+            this.labelControl3.Text = "Server";
             // 
             // txtXmppServer
             // 

@@ -51,6 +51,8 @@ namespace MiniClient
 
         void FrmChat_Load(object sender, EventArgs e)
         {
+            FrmParent.Instance.ShowLoading();
+             
             DataTable dt = new DataTable();
             connection.Open();
             SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  DateTime, Body, PIC from HistoryTransaction 
@@ -93,6 +95,8 @@ namespace MiniClient
                     }
                 }
             }
+
+            FrmParent.Instance.HideLoading();
         }
 
         private void GetLastRow(string user, string domain, string group, out DateTime lastDt)
@@ -160,6 +164,15 @@ namespace MiniClient
             else if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
             {
                 dtTemp = DateTime.Now;
+                rtfChat.SelectionColor = Color.Black;
+                rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
+                rtfChat.AppendText("\r\n");
+            }
+            else if (dtTemp.Date.CompareTo(date.Date) < 0)
+            {
+                dtTemp = date;
                 rtfChat.SelectionColor = Color.Black;
                 rtfChat.SelectionAlignment = HorizontalAlignment.Center;
                 rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);

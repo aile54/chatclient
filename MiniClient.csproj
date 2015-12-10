@@ -261,6 +261,7 @@
     <Content Include="ClientDatabase.sdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="graphics\bar1.gif" />
     <Content Include="Matrix.dll" />
   </ItemGroup>
   <ItemGroup>
