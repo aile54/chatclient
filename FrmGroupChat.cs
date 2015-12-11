@@ -25,8 +25,15 @@ namespace MiniClient
         HistoryTransactionTableAdapter local_history;
         SqlCeConnection connection;
         FileTransferManager fm = new FileTransferManager();
-        Dictionary<string,string> listAddress = new Dictionary<string,string>();
-        #region << Constructors >>        
+        Dictionary<string, string> listAddress = new Dictionary<string, string>();
+        private readonly ListView _listContract;
+        private readonly Jid _roomJid;
+        private readonly XmppClient _xmppClient;
+        private readonly string _nickname;
+        DataTable dtHistory = new DataTable();
+        bool isHis = false;
+        public static FrmGroupChat Instance;
+        #region << Constructors >>
         public FrmGroupChat(XmppClient xmppClient, Jid roomJid, string nickname, ListView listContract)
         {
             InitializeComponent();
@@ -38,22 +45,21 @@ namespace MiniClient
             _listContract = listContract;
             fm.XmppClient = FrmLogin.Instance.xmppClient;
             fm.OnFile += fm_OnFile;
-            Text = roomJid.User + " Group";;
+            Text = roomJid.User + " Group"; ;
             mm = new MucManager(xmppClient);
 
             // Setup new Message Callback using the MessageFilter
             _xmppClient.MessageFilter.Add(roomJid, new BareJidComparer(), MessageCallback);
-            
+
             // Setup new Presence Callback using the PresenceFilter
             _xmppClient.PresenceFilter.Add(roomJid, new BareJidComparer(), PresenceCallback);
 
             GetLastRow(_xmppClient.Username, _xmppClient.XmppDomain, _roomJid.Bare, out LastDtDB);
+            btnHistory.Enabled = false;
+            Form.CheckForIllegalCrossThreadCalls = false;
+            Instance = this;
         }
         #endregion
-        private readonly ListView _listContract;
-        private readonly Jid                     _roomJid;
-        private readonly XmppClient              _xmppClient;
-        private readonly string                  _nickname;
 
         private void FrmGroupChat_Load(object sender, EventArgs e)
         {
@@ -61,6 +67,11 @@ namespace MiniClient
             {
                 mm.EnterRoom(_roomJid, _nickname);
             }
+
+            dtHistory.Columns.Add("PIC", typeof(string));
+            dtHistory.Columns.Add("Body", typeof(string));
+            dtHistory.Columns.Add("DateTime", typeof(DateTime));
+            timer1.Start();
         }
 
         private void FrmGroupChat_FormClosed(object sender, FormClosedEventArgs e)
@@ -68,7 +79,7 @@ namespace MiniClient
             if (_roomJid != null)
             {
                 mm.ExitRoom(_roomJid, _nickname);
-                
+
                 // Remove the Message Callback in the MessageFilter
                 _xmppClient.MessageFilter.Remove(_roomJid);
 
@@ -92,12 +103,29 @@ namespace MiniClient
                         if (DateTime.Now.Date.AddDays(-1).CompareTo(dt.Date) <= 0)
                         {
                             IncomingMessage(e.Message);
+
+                            timer1.Stop();
+                            //Save history tb
+                            ThreadStart starter = delegate { SaveHistory(); };
+                            Thread thread = new Thread(starter);
+                            thread.Start();
+                            thread.Join();
+                            if (!thread.IsAlive)
+                            {
+                                btnHistory.Enabled = true;
+                            }
                         }
                         else
                         {
                             if (LastDtDB.CompareTo(dt) < 0)
                             {
-                                SaveHistory(e.Message.From.Resource, e.Message.Body, dt, e.Message.From.Resource);
+                                isHis = true;
+                                DataRow dr = dtHistory.NewRow();
+                                dr["PIC"] = e.Message.From.Resource;
+                                dr["Body"] = e.Message.Body;
+                                dr["DateTime"] = dt;
+                                dtHistory.Rows.Add(dr);
+                                //SaveHistory(e.Message.From.Resource, e.Message.Body, dt, e.Message.From.Resource);
                             }
                         }
                     }
@@ -112,7 +140,7 @@ namespace MiniClient
                 MessageBox.Show(ex.Message.ToString());
                 throw;
             }
-            
+
         }
 
         private void GetLastRow(string user, string domain, string group, out DateTime lastDt)
@@ -131,21 +159,42 @@ namespace MiniClient
             }
         }
 
-        private void SaveHistory(string person, string body, DateTime dt, string pic)
+        private void SaveHistory()
         {
-            string encrypt = Cryptography.RSA2.Encrypt(body);
             StringBuilder q = new StringBuilder();
-            q.Append("INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], [ServerID], [GroupName], [Body], [DateTime], [PIC]) VALUES ");
-            q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", 1, _xmppClient.Username, _xmppClient.XmppDomain,
-                _roomJid.Bare, encrypt, dt, pic);
             connection.Open();
-            SqlCeCommand sqlCeCommand = new SqlCeCommand();
-            sqlCeCommand = connection.CreateCommand();
-            sqlCeCommand.CommandText = q.ToString();
-            sqlCeCommand.ExecuteNonQuery();
+            var transaction = connection.BeginTransaction();
+            SqlCeCommand sqlCeCommand = connection.CreateCommand();
+            sqlCeCommand.CommandType = CommandType.TableDirect;
+            sqlCeCommand.CommandText = "HistoryTransaction";
+            sqlCeCommand.Transaction = transaction;
+            SqlCeResultSet result = sqlCeCommand.ExecuteResultSet(ResultSetOptions.Updatable);
+            SqlCeUpdatableRecord rec = result.CreateRecord();
+            foreach (DataRow item in dtHistory.Rows)
+            {
+                string encrypt = Cryptography.RSA2.Encrypt(item["Body"].ToString());
+                //                q.Append(@"INSERT INTO [HistoryTransaction] ([IsGroup], [AccountName], 
+                //                        [ServerID], [GroupName], [Body], [DateTime], [PIC]) VALUES ");
+                //                q.AppendFormat("({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", 
+                //                            1, _xmppClient.Username, _xmppClient.XmppDomain,
+                //                            _roomJid.Bare, encrypt, DateTime.Parse(item["Body"].ToString()), item["PIC"].ToString());
+
+                rec.SetValue(1, 1);
+                rec.SetValue(2, _xmppClient.Username);
+                rec.SetValue(3, _xmppClient.XmppDomain);
+                rec.SetValue(4, _roomJid.Bare);
+                rec.SetValue(5, encrypt);
+                rec.SetValue(6, DateTime.Parse(item["DateTime"].ToString()));
+                rec.SetValue(7, item["PIC"].ToString());
+                result.Insert(rec);
+            }
+
+            result.Close();
+            result.Dispose();
+            transaction.Commit();
             connection.Close();
         }
-      
+
         private void PresenceCallback(object sender, PresenceEventArgs e)
         {
 
@@ -166,7 +215,7 @@ namespace MiniClient
             // we request an instant room and accept the and accept the default configuration by the server
             if (mucX.HasStatus(201)) // 201 =  room is awaiting configuration.d
                 mm.RequestInstantRoom(_roomJid);
-           
+
 
             var lvi = FindListViewItem(e.Presence.From);
             if (lvi != null)
@@ -180,7 +229,7 @@ namespace MiniClient
                     int imageIdx = Util.GetRosterImageIndex(e.Presence);
                     lvi.ImageIndex = imageIdx;
                     //lvi.SubItems[1].Text = (e.Presence.Status ?? "");
-                    
+
                     var u = e.Presence.MucUser;
                     if (u != null)
                     {
@@ -195,11 +244,11 @@ namespace MiniClient
             else
             {
                 int imageIdx = Util.GetRosterImageIndex(e.Presence);
-                
-                var lv = new ListViewItem(e.Presence.From.Resource) {Tag = e.Presence.From.ToString()};
+
+                var lv = new ListViewItem(e.Presence.From.Resource) { Tag = e.Presence.From.ToString() };
 
                 //lv.SubItems.Add(e.Presence.Status ?? "");
-                
+
                 var u = e.Presence.MucUser;
                 if (u != null)
                 {
@@ -233,43 +282,32 @@ namespace MiniClient
             try
             {
 
-            if (msg.Type == MessageType.Error)
-            {
-                //Handle errors here
-                // we dont handle them in this example
-                return;
-            }
-
-            if (msg.Subject != null)
-            {
-                txtSubject.Text = msg.Subject;
-
-                rtfChat.SelectionColor = Color.DarkGreen;
-                // The Nickname of the sender is in GroupChat in the Resource of the Jid
-                rtfChat.AppendText(msg.From.Resource + " changed subject: ");
-                rtfChat.SelectionColor = Color.Black;                
-                rtfChat.AppendText(msg.Subject);
-                rtfChat.AppendText("\r\n");
-            }
-            else
-            {
-                if (msg.Delay != null)
+                if (msg.Type == MessageType.Error)
                 {
-                    string datetime = msg.Delay.GetAttribute("stamp");
-                    DateTime dt = new DateTime();
-                    DateTime.TryParse(datetime, out dt);
-                    if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
+                    //Handle errors here
+                    // we dont handle them in this example
+                    return;
+                }
+
+                if (msg.Subject != null)
+                {
+                    txtSubject.Text = msg.Subject;
+
+                    rtfChat.SelectionColor = Color.DarkGreen;
+                    // The Nickname of the sender is in GroupChat in the Resource of the Jid
+                    rtfChat.AppendText(msg.From.Resource + " changed subject: ");
+                    rtfChat.SelectionColor = Color.Black;
+                    rtfChat.AppendText(msg.Subject);
+                    rtfChat.AppendText("\r\n");
+                }
+                else
+                {
+                    if (msg.Delay != null)
                     {
-                        dtTemp = dt;
-                        rtfChat.SelectionColor = Color.Black;
-                        rtfChat.SelectionAlignment = HorizontalAlignment.Center;
-                        rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
-                        rtfChat.AppendText(dt.ToLongDateString().ToString());
-                        rtfChat.AppendText("\r\n");
-                    }
-                    else
-                    {
-                        if (dtTemp.Date.CompareTo(dt.Date) != 0)
+                        string datetime = msg.Delay.GetAttribute("stamp");
+                        DateTime dt = new DateTime();
+                        DateTime.TryParse(datetime, out dt);
+                        if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
                         {
                             dtTemp = dt;
                             rtfChat.SelectionColor = Color.Black;
@@ -278,31 +316,42 @@ namespace MiniClient
                             rtfChat.AppendText(dt.ToLongDateString().ToString());
                             rtfChat.AppendText("\r\n");
                         }
+                        else
+                        {
+                            if (dtTemp.Date.CompareTo(dt.Date) != 0)
+                            {
+                                dtTemp = dt;
+                                rtfChat.SelectionColor = Color.Black;
+                                rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                                rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                                rtfChat.AppendText(dt.ToLongDateString().ToString());
+                                rtfChat.AppendText("\r\n");
+                            }
+                        }
                     }
-                }
-                else if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
-                {
-                    dtTemp = DateTime.Now;
+                    else if (dtTemp == null || dtTemp.CompareTo(DateTime.MinValue) == 0)
+                    {
+                        dtTemp = DateTime.Now;
+                        rtfChat.SelectionColor = Color.Black;
+                        rtfChat.SelectionAlignment = HorizontalAlignment.Center;
+                        rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
+                        rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
+                        rtfChat.AppendText("\r\n");
+                    }
+
+
+                    if (msg.Body == null)
+                        return;
+
+                    rtfChat.SelectionAlignment = HorizontalAlignment.Left;
+                    rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
+                    rtfChat.SelectionColor = Color.Red;
+                    // The Nickname of the sender is in GroupChat in the Resource of the Jid
+                    rtfChat.AppendText(msg.From.Resource + " said: ");
                     rtfChat.SelectionColor = Color.Black;
-                    rtfChat.SelectionAlignment = HorizontalAlignment.Center;
-                    rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Bold);
-                    rtfChat.AppendText(dtTemp.ToLongDateString().ToString());
+                    rtfChat.AppendText(msg.Body);
                     rtfChat.AppendText("\r\n");
                 }
-                
-
-                if (msg.Body == null)
-                    return;
-
-                rtfChat.SelectionAlignment = HorizontalAlignment.Left;
-                rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
-                rtfChat.SelectionColor = Color.Red;
-                // The Nickname of the sender is in GroupChat in the Resource of the Jid
-                rtfChat.AppendText(msg.From.Resource + " said: ");
-                rtfChat.SelectionColor = Color.Black;
-                rtfChat.AppendText(msg.Body);
-                rtfChat.AppendText("\r\n");
-            }
             }
             catch (Exception)
             {
@@ -349,7 +398,15 @@ namespace MiniClient
 
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            new FrmHistoryTransaction(_xmppClient, _roomJid, _nickname,true).ShowDialog();
+            btnHistory.Enabled = false;
+            
+            ThreadStart starter = delegate { new FrmHistoryChat(_xmppClient, _roomJid, _nickname, true).ShowDialog(); };
+            Thread thread = new Thread(starter);
+            thread.Start();
+            if (!thread.IsAlive)
+            {
+                btnHistory.Enabled = true;
+            }
         }
 
         private void rtfChat_TextChanged(object sender, EventArgs e)
@@ -385,6 +442,24 @@ namespace MiniClient
             recvFile.StartAccept();
             //e.Accept = true;
 
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (isHis)
+            {
+                //Save history tb
+                ThreadStart starter = delegate { SaveHistory(); };
+                Thread thread = new Thread(starter);
+                thread.Start();
+                thread.Join();
+                if (!thread.IsAlive)
+                {
+                    btnHistory.Enabled = true;
+                    isHis = false;
+                    timer1.Stop();
+                }
+            }
         }
     }
 }

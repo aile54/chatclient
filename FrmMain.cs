@@ -23,6 +23,7 @@ using MiniClient.ClientDatabaseTableAdapters;
 using System.Data.SqlServerCe;
 using System.Data;
 using Matrix.Xmpp.Vcard;
+using System.Threading;
 
 namespace MiniClient
 {
@@ -337,11 +338,11 @@ namespace MiniClient
 
         private void listGroup_DoubleClick(object sender, System.EventArgs e)
         {
-            if (listGroup.SelectedItems.Count > 0)
+            if (listGroup.SelectedItems.Count > 0 && tabGroup.SelectedTab == tabPage3)
             {
                 GetMyVcard(listGroup.SelectedItems[0]);
             }
-            else if (listBookmarkedRooms.SelectedItems.Count > 0)
+            else if (listBookmarkedRooms.SelectedItems.Count > 0 && tabGroup.SelectedTab == tabPage4)
             {
                 GetMyVcard(listBookmarkedRooms.SelectedItems[0]);
             }
@@ -678,6 +679,8 @@ namespace MiniClient
         {
             // add custom information to outgoing Presences when desired
             //e.Presence.Add(new XElement("foo"));
+            //e.Presence.Muc.History = new Matrix.Xmpp.Muc.History();
+            //e.Presence.Muc.History.MaxCharacters = 0;
         }
 
         #region << Change Presence >>

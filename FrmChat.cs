@@ -12,6 +12,7 @@ using System.Data.SqlServerCe;
 using System.Text;
 using MiniClient.ClientDatabaseTableAdapters;
 using Encrypt_Decrypt_Tool;
+using System.Threading;
 
 namespace MiniClient
 {
@@ -47,12 +48,27 @@ namespace MiniClient
             GetLastRow(_xmppClient.Username, _xmppClient.XmppDomain, _jid.Bare, out LastDtDB);
 
             this.Load += new EventHandler(FrmChat_Load);
+            Form.CheckForIllegalCrossThreadCalls = false;
         }
 
         void FrmChat_Load(object sender, EventArgs e)
         {
             FrmParent.Instance.ShowLoading();
-             
+            ThreadStart starter = delegate { LoadData(); };
+            Thread thread = new Thread(starter);
+            thread.Start();
+            thread.Join();
+            if (!thread.IsAlive)
+            {
+                FrmParent.Instance.HideLoading();
+            }
+        }
+
+        /// <summary>
+        /// Loads the data.
+        /// </summary>
+        public void LoadData()
+        {
             DataTable dt = new DataTable();
             connection.Open();
             SqlCeDataAdapter adapter = new SqlCeDataAdapter(string.Format(@"Select  DateTime, Body, PIC from HistoryTransaction 
@@ -95,8 +111,6 @@ namespace MiniClient
                     }
                 }
             }
-
-            FrmParent.Instance.HideLoading();
         }
 
         private void GetLastRow(string user, string domain, string group, out DateTime lastDt)
@@ -304,7 +318,15 @@ namespace MiniClient
 
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            new FrmHistoryTransaction(_xmppClient, _jid, _nickname, false).ShowDialog();
+            btnHistory.Enabled = false;
+            ThreadStart starter = delegate { new FrmHistoryChat(_xmppClient, _jid, _nickname, false).ShowDialog(); };
+            Thread thread = new Thread(starter);
+            thread.Start();
+            thread.Join();
+            if (!thread.IsAlive)
+            {
+                btnHistory.Enabled = true;
+            }
         }
 
         private void rtfChat_TextChanged(object sender, EventArgs e)

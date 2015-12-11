@@ -114,6 +114,12 @@
     <Compile Include="FrmGroupChat.designer.cs">
       <DependentUpon>FrmGroupChat.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmHistoryChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmHistoryChat.Designer.cs">
+      <DependentUpon>FrmHistoryChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmHistoryTransaction.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -186,6 +192,9 @@
     <EmbeddedResource Include="FrmGroupChat.resx">
       <DependentUpon>FrmGroupChat.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmHistoryChat.resx">
+      <DependentUpon>FrmHistoryChat.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmHistoryTransaction.resx">
       <DependentUpon>FrmHistoryTransaction.cs</DependentUpon>

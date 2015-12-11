@@ -50,6 +50,7 @@ namespace MiniClient
             this.btnSendFile = new System.Windows.Forms.Button();
             this.btnHistory = new System.Windows.Forms.Button();
             this.cmdSend = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -281,6 +282,11 @@ namespace MiniClient
             this.cmdSend.UseVisualStyleBackColor = true;
             this.cmdSend.Click += new System.EventHandler(this.cmdSend_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // FrmGroupChat
             // 
             this.AcceptButton = this.cmdSend;
@@ -315,22 +321,23 @@ namespace MiniClient
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.RichTextBox rtfSend;
         private System.Windows.Forms.ListView lvwRoster;
         private System.Windows.Forms.ColumnHeader headerNickname;
         private System.Windows.Forms.Button cmdSend;
         private System.Windows.Forms.ImageList ilsRoster;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.TextBox txtSubject;
         private System.Windows.Forms.RichTextBox rtfChat;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button cmdChangeSubject;
         private System.Windows.Forms.ColumnHeader headerRole;
         private System.Windows.Forms.ColumnHeader headerAffiliation;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnHistory;
         private System.Windows.Forms.Button btnSendFile;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        public System.Windows.Forms.Button btnHistory;
+        private System.Windows.Forms.Timer timer1;
+        public System.Windows.Forms.RichTextBox rtfSend;
+        public System.Windows.Forms.TextBox txtSubject;
+        public System.Windows.Forms.Button cmdChangeSubject;
 
     }
 }
