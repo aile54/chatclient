@@ -136,6 +136,6 @@ namespace MiniClient
         private System.Windows.Forms.RichTextBox rtfSend;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.RichTextBox rtfChat;
-        private System.Windows.Forms.Button btnHistory;
+        public System.Windows.Forms.Button btnHistory;
     }
 }

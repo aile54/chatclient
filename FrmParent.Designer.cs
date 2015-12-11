@@ -51,7 +51,7 @@
             this.loading.BackColor = System.Drawing.Color.Transparent;
             this.loading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.loading.Image = global::MiniClient.Properties.Resources.bar1;
-            this.loading.Location = new System.Drawing.Point(12, 126);
+            this.loading.Location = new System.Drawing.Point(19, 117);
             this.loading.Name = "loading";
             this.loading.Size = new System.Drawing.Size(253, 18);
             this.loading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;

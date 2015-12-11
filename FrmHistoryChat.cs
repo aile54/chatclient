@@ -38,6 +38,10 @@ namespace MiniClient
             {
                 FrmGroupChat.Instance.btnHistory.Enabled = true;
             }
+            else
+            {
+
+            }
             
         }
 

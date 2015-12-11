@@ -403,10 +403,6 @@ namespace MiniClient
             ThreadStart starter = delegate { new FrmHistoryChat(_xmppClient, _roomJid, _nickname, true).ShowDialog(); };
             Thread thread = new Thread(starter);
             thread.Start();
-            if (!thread.IsAlive)
-            {
-                btnHistory.Enabled = true;
-            }
         }
 
         private void rtfChat_TextChanged(object sender, EventArgs e)
