@@ -39,6 +39,8 @@
             this.cboGroup = new System.Windows.Forms.ComboBox();
             this.rtMessage = new System.Windows.Forms.RichTextBox();
             this.btnNewGroup = new System.Windows.Forms.Button();
+            this.listSearchContracts = new System.Windows.Forms.ListView();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -139,13 +141,36 @@
             this.btnNewGroup.UseVisualStyleBackColor = true;
             this.btnNewGroup.Click += new System.EventHandler(this.btnAddGroup_Click);
             // 
+            // listSearchContracts
+            // 
+            this.listSearchContracts.Location = new System.Drawing.Point(287, 12);
+            this.listSearchContracts.MultiSelect = false;
+            this.listSearchContracts.Name = "listSearchContracts";
+            this.listSearchContracts.Size = new System.Drawing.Size(250, 166);
+            this.listSearchContracts.TabIndex = 12;
+            this.listSearchContracts.UseCompatibleStateImageBehavior = false;
+            this.listSearchContracts.View = System.Windows.Forms.View.List;
+            this.listSearchContracts.SelectedIndexChanged += new System.EventHandler(this.listSearchContracts_SelectedIndexChanged);
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(15, 155);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch.TabIndex = 13;
+            this.btnSearch.Text = "Search";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
             // FrmAddUser
             // 
             this.AcceptButton = this.btnAdd;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(293, 191);
+            this.ClientSize = new System.Drawing.Size(548, 191);
+            this.Controls.Add(this.btnSearch);
+            this.Controls.Add(this.listSearchContracts);
             this.Controls.Add(this.btnNewGroup);
             this.Controls.Add(this.rtMessage);
             this.Controls.Add(this.cboGroup);
@@ -158,9 +183,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(309, 230);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(309, 230);
+            this.Name = "FrmAddUser";
             this.Text = "User Management";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -180,5 +205,7 @@
         private System.Windows.Forms.ComboBox cboGroup;
         private System.Windows.Forms.RichTextBox rtMessage;
         private System.Windows.Forms.Button btnNewGroup;
+        private System.Windows.Forms.ListView listSearchContracts;
+        private System.Windows.Forms.Button btnSearch;
     }
 }

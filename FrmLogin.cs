@@ -22,6 +22,7 @@ namespace MiniClient
         public string UserName { get { return txtUsername.Text; } }
         public string Password { get { return txtPassword.Text; } }
         public string XmppServer { get { return txtXmppServer.Text; } }
+        public string HostName { get { return (new Matrix.Jid(txtUsername.Text)).Server; } }
         private const int CP_NOCLOSE_BUTTON = 0x200;
         protected override CreateParams CreateParams
         {
@@ -48,24 +49,29 @@ namespace MiniClient
         }
 
         private void btnSignIn_Click(object sender, EventArgs e)
-        {    
+        {
+            //FrmParent.Instance.ShowLoading();
+            // start background operation
+            //this.backgroundWorker1.RunWorkerAsync();
+            Matrix.Jid Jd = new Matrix.Jid(txtUsername.Text);
             // set settings
-            _login.User = txtUsername.Text;
+            _login.User = Jd.User;
             _login.Server = txtXmppServer.Text;
             _login.Password = txtPassword.Text;
 
-            xmppClient.SetUsername(FrmLogin.Instance.UserName);
+            xmppClient.SetUsername(Jd.User);
             xmppClient.SetXmppDomain(FrmLogin.Instance.XmppServer);
             xmppClient.Password = FrmLogin.Instance.Password;
 
             xmppClient.Status = "ready for chat";
             xmppClient.Show = Matrix.Xmpp.Show.Chat;
 
-
             Matrix.License.LicenseManager.m_IsValid = true;
-            xmppClient.Open();
 
-         
+            this.Hide();
+            FrmParent.Instance.ShowLoading();
+
+            xmppClient.Open();
         }
 
         private void InitSettings()
@@ -130,14 +136,15 @@ namespace MiniClient
         private void xmppClient_OnAuthError(object sender, Matrix.Xmpp.Sasl.SaslEventArgs e)
         {
             xmppClient.Close();
-
+            FrmParent.Instance.HideLoading();
             MessageBox.Show("Tài khoản hoặc mật khẩu không đúng!");
+            this.Show();
         }
 
         private void xmppClient_OnLogin(object sender, Matrix.EventArgs e)
         {
+            FrmParent.Instance.HideLoading();
             FrmLogin.FrmMain.Show();
-            this.Hide();
         }
     }
 }

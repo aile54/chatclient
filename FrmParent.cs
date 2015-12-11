@@ -17,6 +17,7 @@ namespace MiniClient
             InitializeComponent();
             this.Load += new EventHandler(FrmParent_Load);
             FrmParent.Instance = this;
+            loading.Visible = false;
         }
 
         void FrmParent_Load(object sender, EventArgs e)
@@ -24,6 +25,20 @@ namespace MiniClient
             FrmLogin frmLogin = new FrmLogin();
             frmLogin.MdiParent = this;
             frmLogin.Show();
+        }
+
+        public void ShowLoading()
+        {
+            var screensize = Screen.PrimaryScreen.Bounds;
+            var programsize = Bounds;
+            loading.Location = new Point((programsize.Width) / 2 - 120,
+                                  (programsize.Height) / 2 - 10);
+            loading.Visible = true;
+        }
+
+        public void HideLoading()
+        {
+            loading.Visible = false;
         }
 
         private void FrmParent_MdiChildActivate(object sender, EventArgs e)

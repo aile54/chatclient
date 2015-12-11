@@ -29,7 +29,7 @@ namespace MiniClient
         void DiscoServer()
         {
             _dm = new DiscoManager(XmppClient);
-            _dm.DiscoverItems(XmppClient.XmppDomain, new EventHandler<IqEventArgs>(DiscoItemsResult));
+            _dm.DiscoverItems("conference.vitenet1.net", new EventHandler<IqEventArgs>(DiscoItemsResult));
         }
 
         void DiscoItemsResult(object sender, IqEventArgs e)
