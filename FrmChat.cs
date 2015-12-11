@@ -13,6 +13,7 @@ using System.Text;
 using MiniClient.ClientDatabaseTableAdapters;
 using Encrypt_Decrypt_Tool;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace MiniClient
 {
@@ -208,6 +209,8 @@ namespace MiniClient
 
         public void IncomingMessage(Message msg, string person, DateTime date)
         {
+            FlashWindow.Flash(this.MdiParent, 1);
+
             if (msg.Delay != null)
             {
                 string datetime = msg.Delay.GetAttribute("stamp");
