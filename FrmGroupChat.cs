@@ -343,6 +343,7 @@ namespace MiniClient
                     if (msg.Body == null)
                         return;
 
+                    FlashWindow.Flash(this.MdiParent, 1);
                     rtfChat.SelectionAlignment = HorizontalAlignment.Left;
                     rtfChat.SelectionFont = new System.Drawing.Font(rtfChat.Font, FontStyle.Regular);
                     rtfChat.SelectionColor = Color.Red;

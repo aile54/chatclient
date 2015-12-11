@@ -31,6 +31,7 @@ namespace MiniClient
         SqlCeConnection connection;
         private MucManager mm;
         SqlCeCommand sqlCeCommand;
+        public static FrmChat Instance;
         public FrmChat(Jid jid, XmppClient con, string nickname)
         {
             _jid = jid;
@@ -49,6 +50,7 @@ namespace MiniClient
             GetLastRow(_xmppClient.Username, _xmppClient.XmppDomain, _jid.Bare, out LastDtDB);
 
             this.Load += new EventHandler(FrmChat_Load);
+            Instance = this;
             Form.CheckForIllegalCrossThreadCalls = false;
         }
 

@@ -20,6 +20,7 @@ namespace MiniClient
         private readonly XmppClient _xmppClient;
         private readonly string _nickname;
         private readonly bool _isGroup;
+        public static FrmGroupChat Instance;
         public FrmHistoryChat(XmppClient xmppClient, Jid roomJid, string nickname, bool isGroup)
         {
             InitializeComponent();
@@ -40,7 +41,7 @@ namespace MiniClient
             }
             else
             {
-
+                FrmChat.Instance.btnHistory.Enabled = true;
             }
             
         }
